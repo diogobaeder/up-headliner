@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 
-from up.headliner import main
+from up.headliner import server
 
 if __name__ == "__main__":
-    main.main()
+    server.main()

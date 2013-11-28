@@ -2,7 +2,7 @@
 import os
 import argparse
 
-from up.headliner import app, settings
+from up.headliner import http, settings
 
 DEFAULT_CONFIG_FILEPATH = "/etc/up/headliner.json"
 
@@ -47,7 +47,7 @@ def main():
     if options.debug is not None:
         settings.server['debug'] = options.debug
 
-    app.run(**settings.server)
+    http.app.run(**settings.server)
 
 if __name__ == "__main__":
     main()

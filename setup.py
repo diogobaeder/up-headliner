@@ -17,7 +17,7 @@ setup(
         description = "Demo content provider based on Mozilla UP interests",
         author = "Mozilla",
         packages=["up.headliner"],
-        namespace_packages=["up.headliner", "up.headliner.content"],
+        namespace_packages=["up", "up.headliner"],
         include_package_data=True,
         install_requires = requires,
         scripts=["scripts/up-headliner-server"]
