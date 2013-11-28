@@ -3,6 +3,7 @@
 .*.swo
 *.log
 *.egg-info
+up-headliner-env
 build/
 dist/
 MANIFEST
