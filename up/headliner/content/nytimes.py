@@ -2,6 +2,7 @@ import re
 import logging
 from furl import furl
 import requests
+import dateutil.parser as du_parser
 from up.headliner import Application
 from up.headliner.tasks import aggregator
 logger = logging.getLogger("headliner")
@@ -179,11 +180,13 @@ class MostPopular(object):
         if MostPopular.MAPPINGS.has_key(section):
             uri = furl(article["url"])
             uri.query.add({"src": "moz-up"})
+            pub_date = du_parser.parse(article["published_date"]).date()
 
             data = {
                     "url": uri.url,
                     "title": article["title"],
                     "media": article["media"],
+                    "published_date": pub_date
             }
 
             labels = set()

@@ -109,6 +109,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all"
         }
         result = self.most_popular.categorize_article(article)
@@ -119,6 +120,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html?other=args",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all"
         }
         result = self.most_popular.categorize_article(article)
@@ -138,6 +140,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all",
         }
         result = self.most_popular.categorize_article(section_only)
@@ -147,6 +150,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/multiple/interests/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "multiple",
         }
         result = self.most_popular.categorize_article(multiple)
@@ -156,6 +160,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all",
         }
         result = self.most_popular.categorize_article(path)
@@ -165,6 +170,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all",
                 "adx_keywords": "foo;bar;keyword;baz",
         }
@@ -175,6 +181,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all",
                 "des_facet": ["FACETED"],
         }
@@ -185,6 +192,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "all",
                 "column": "columned"
         }
@@ -195,6 +203,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "none",
         }
         result = self.most_popular.categorize_article(none)
@@ -204,6 +213,7 @@ class TestMostPopular:
                 "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
                 "title": "Foo Bar",
                 "media": {},
+                "published_date": "2013-12-04",
                 "section": "none",
         }
         result = self.most_popular.categorize_article(none_2)
