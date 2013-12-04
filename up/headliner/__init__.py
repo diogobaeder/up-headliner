@@ -37,6 +37,10 @@ class Application(object):
             url = "{type}://{host}:{port}/{database}".format(**self.config.message_broker)
         return url
 
+    @property
+    def providers(self):
+        return self.config.providers
+
     @classmethod
     def instance(cls, config=None):
         if hasattr(Application, "_instance"):

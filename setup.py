@@ -7,11 +7,14 @@ requires = [
         "celery==3.1.5",
         "redis==2.8.0",
         "hiredis==0.1.1",
+        "requests==2.0.1",
+        "furl==0.3.6",
 ]
 
 if os.environ.has_key('MOZ_UPHEADLINER_DEV'):
     requires.extend([
         "ipython==1.1.0",
+        "nose==1.3.0",
     ])
 
 setup(
@@ -23,5 +26,5 @@ setup(
         namespace_packages=["up", "up.headliner"],
         include_package_data=True,
         install_requires = requires,
-        scripts=["scripts/up-headliner-server"]
+        scripts=["scripts/up-headliner-server"],
 )
