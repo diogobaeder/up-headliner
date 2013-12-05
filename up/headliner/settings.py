@@ -17,6 +17,7 @@ redis = {
 
 providers = {
         "nytimes_mostpopular" : {
+            "api_class": "up.headliner.content.nytimes.api.MostPopular",
             "api_url": "http://api.nytimes.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
             "api_key" : "",
         },

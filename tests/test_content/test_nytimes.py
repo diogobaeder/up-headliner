@@ -1,7 +1,7 @@
 from furl import furl
 from urlparse import urlparse, parse_qs
 from nose.tools import assert_equals, assert_is_not_none
-from up.headliner.content.nytimes import MostPopular
+from up.headliner.content.nytimes.api import MostPopular
 
 class TestMostPopular:
     @classmethod
@@ -104,7 +104,7 @@ class TestMostPopular:
         assert_equals(urls[0], self.most_popular.api_urls[1])
         assert_equals(urls[-1], self.most_popular.api_urls[0])
 
-    def test_categorize_article_src(self):
+    def test_extract_categorize_src(self):
         article = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
@@ -112,7 +112,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "all"
         }
-        result = self.most_popular.categorize_article(article)
+        result = self.most_popular.extract_categorize(article)
         assert_equals(result["data"]["url"][0:len(article["url"])], article["url"])
         assert_equals(result["data"]["url"][len(article["url"]):], "?src=moz-up")
 
@@ -123,7 +123,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "all"
         }
-        result = self.most_popular.categorize_article(article)
+        result = self.most_popular.extract_categorize(article)
 
         uri = furl(result["data"]["url"])
         assert_equals(uri.query.params["src"], "moz-up")
@@ -131,7 +131,7 @@ class TestMostPopular:
         assert_equals(len(uri.query.params), 2)
         assert_equals(result["data"]["url"][0:len(article["url"])], article["url"])
 
-    def test_categorize_article_labels(self):
+    def test_extract_categorize_labels(self):
         """
         Test categorization
         """
@@ -143,7 +143,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "all",
         }
-        result = self.most_popular.categorize_article(section_only)
+        result = self.most_popular.extract_categorize(section_only)
         assert_equals(result["labels"], ["All-Under-Section"])
  
         multiple = {
@@ -153,7 +153,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "multiple",
         }
-        result = self.most_popular.categorize_article(multiple)
+        result = self.most_popular.extract_categorize(multiple)
         assert_equals(set(result["labels"]), set(["Interest-One", "Interest-Two", "Interest-Three"]))
 
         path = {
@@ -163,7 +163,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "all",
         }
-        result = self.most_popular.categorize_article(path)
+        result = self.most_popular.extract_categorize(path)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Sub-Path-Sensitive"]))
 
         keyword = {
@@ -174,7 +174,7 @@ class TestMostPopular:
                 "section": "all",
                 "adx_keywords": "foo;bar;keyword;baz",
         }
-        result = self.most_popular.categorize_article(keyword)
+        result = self.most_popular.extract_categorize(keyword)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Keyword-Matched"]))
  
         facet = {
@@ -185,7 +185,7 @@ class TestMostPopular:
                 "section": "all",
                 "des_facet": ["FACETED"],
         }
-        result = self.most_popular.categorize_article(facet)
+        result = self.most_popular.extract_categorize(facet)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Facet-Matched"]))
  
         column = {
@@ -196,7 +196,7 @@ class TestMostPopular:
                 "section": "all",
                 "column": "columned"
         }
-        result = self.most_popular.categorize_article(column)
+        result = self.most_popular.extract_categorize(column)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Column-Matched"]))
 
         none = {
@@ -206,7 +206,7 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "none",
         }
-        result = self.most_popular.categorize_article(none)
+        result = self.most_popular.extract_categorize(none)
         assert_equals(set(result["labels"]), set(["No-Subsection"]))
 
         none_2 = {
@@ -216,5 +216,5 @@ class TestMostPopular:
                 "published_date": "2013-12-04",
                 "section": "none",
         }
-        result = self.most_popular.categorize_article(none_2)
+        result = self.most_popular.extract_categorize(none_2)
         assert_equals(set(result["labels"]), set([]))

@@ -10,6 +10,8 @@ requires = [
         "requests==2.0.1",
         "furl==0.3.6",
         "python-dateutil==2.2",
+        "gevent==1.0",
+        "grequests==0.2.0",
 ]
 
 if os.environ.has_key('MOZ_UPHEADLINER_DEV'):

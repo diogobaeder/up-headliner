@@ -4,7 +4,9 @@
 .*.swo
 *.log
 *.egg-info
+setup.cfg
 up-headliner-env
+celerybeat-schedule
 build/
 dist/
 MANIFEST

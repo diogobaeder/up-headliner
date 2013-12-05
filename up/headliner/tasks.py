@@ -4,8 +4,5 @@ from up.headliner import Application
 
 config = get_aggregator_config()
 app = Application.instance(config)
-aggregator = Celery("headliner", broker=app.message_broker_url)
 
-@aggregator.task
-def noop():
-    pass
+aggregator = Celery("headliner", broker=app.message_broker_url)

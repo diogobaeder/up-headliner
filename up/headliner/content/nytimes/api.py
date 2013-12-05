@@ -2,13 +2,12 @@ import re
 import logging
 from furl import furl
 import requests
-import dateutil.parser as du_parser
-from up.headliner import Application
-from up.headliner.tasks import aggregator
+import grequests
 logger = logging.getLogger("headliner")
 
 
 class MostPopular(object):
+    NUM_CONCURRENT = 1
     SECTIONS = ["arts", "automobiles", "business", "dining", "education", "fashion", "garden", "health", "movies", "music", "politics", "science", "sports", "style", "technology", "television", "travel", "your-money"]
 
     POPULARITY = ["mostviewed", "mostshared", "mostemailed"]
@@ -120,7 +119,7 @@ class MostPopular(object):
             },
 
             "your-money": {
-                    "_ALL": ["Business"],
+                    "__ALL": ["Business"],
             }
     }
 
@@ -153,24 +152,41 @@ class MostPopular(object):
 
     def next_urls(self, num=5):
         urls = []
-        count = 0
-        while count < num:
+        for i in range(num):
             urls.append(self.next_url())
-            count += 1
         return urls
 
     def fetch_one(self):
-        output = None
+        result_set = None
         url = self.next_url()
         req = requests.get(url)
 
         if req.status_code == 200:
-            output = req.json()
+            result_set = req.json()
         else:
             logger.warn("request_failed status_code:{0} reason:{1} url:{2}".format(req.status_code, req.reason, req.url))
+        if result_set:
+            return self.extract_data(result_set)
+        return None
+
+    def fetch_many(self, num):
+        output = []
+        urls = self.next_urls(num)
+        rs = [grequests.get(u) for u in urls]
+        responses = grequests.map(rs, size=self.NUM_CONCURRENT)
+
+        result_groups = []
+        for resp in responses:
+            if resp.status_code == 200:
+                result_groups.append(resp.json())
+            else:
+                logger.warn("request_failed status_code:{0} reason:{1} url:{2}".format(resp.status_code, resp.reason, resp.url))
+
+        for result_set in result_groups:
+            output.extend(self.extract_data(result_set))
         return output
 
-    def categorize_article(self, article):
+    def extract_categorize(self, article):
         """
         Obtain categorization for a given article, capture data to be stored.
         """
@@ -180,13 +196,11 @@ class MostPopular(object):
         if MostPopular.MAPPINGS.has_key(section):
             uri = furl(article["url"])
             uri.query.add({"src": "moz-up"})
-            pub_date = du_parser.parse(article["published_date"]).date()
 
             data = {
                     "url": uri.url,
                     "title": article["title"],
                     "media": article["media"],
-                    "published_date": pub_date
             }
 
             labels = set()
@@ -228,13 +242,16 @@ class MostPopular(object):
             output = {
                     "data": data,
                     "labels": list(labels),
+                    "pub_date": article["published_date"]
             }
 
         return output
 
-
-    def save_articles(self, input):
+    def extract_data(self, input):
+        articles = []
         if input['num_results'] > 0:
             for article in input['results']:
-                article_data = self.categorize_article(article)
-
+                article_data = self.extract_categorize(article)
+                if article_data:
+                    articles.append(article_data)
+        return articles
