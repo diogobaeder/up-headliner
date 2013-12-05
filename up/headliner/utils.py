@@ -1,5 +1,7 @@
 import os
+import sys
 import argparse
+import logging
 from up.headliner import settings, DEFAULT_CONFIG_FILEPATH
 
 class SettingsObj(object):
@@ -74,3 +76,15 @@ def get_aggregator_config():
     config = __read_config_file(options)
 
     return config
+
+def setup_basic_logger(loglevel=None):
+    loglevel = loglevel or logging.DEBUG
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(loglevel)
+
+    fmt = logging.Formatter("%(levelname)s: %(message)s")
+    handler.setFormatter(fmt)
+
+    logger = logging.getLogger("headliner")
+    logger.addHandler(handler)
+    logger.setLevel(loglevel)
