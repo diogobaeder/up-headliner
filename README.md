@@ -42,9 +42,11 @@ Configuration
 
 Configuration is read in a number of ways:
 
+ 1. by editing the file at up/headliner/settings.py
  1. as a json file located at /etc/up/headliner.json
  1. as a json file specified on the command-line
- 1. by editing the file at up/headliner/settings.py
+
+The configuration is loaded with the first item in the list with the least priority and the last item the most priority.   
 
 New York Times Most Popular API
 -------------------------------
