@@ -18,6 +18,9 @@ def main():
     logger.info("Fetching data")
     data = most_popular.fetch_many(num_urls)
 
+    logger.info("Clearing the datastore")
+    app.article_store.clear_all()
+
     logger.info("Saving data")
     app.article_store.save_articles("nytimes_mostpopular", data)
 

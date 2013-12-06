@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
-app = Flask("up.headliner")
+from flask import Flask
+webapp = Flask("up.headliner")
 
-@app.route('/nytimes/popular')
-def index():
-    interests = request.args.get("interests", "").split(",")
-    return jsonify(type="echo", interests=interests)
+def load_routes(routes):
+    for route in routes:
+        __import__(route)

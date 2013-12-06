@@ -6,7 +6,8 @@ from up.headliner import http
 def main():
     config = get_http_config()
     app = Application.instance(config)
-    http.app.run(**config.server)
+    http.load_routes(config.server["routes"])
+    http.webapp.run(**config.server["http"])
 
 if __name__ == "__main__":
     main()

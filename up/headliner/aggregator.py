@@ -4,7 +4,6 @@ from up.headliner.utils import get_aggregator_config
 from celery.bin.beat import main as beat_main
 from celery import maybe_patch_concurrency
 
-
 def main():
     config = get_aggregator_config()
     app = Application.instance(config)

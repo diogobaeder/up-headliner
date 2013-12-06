@@ -24,7 +24,12 @@ providers = {
 }
 
 server = {
-        "host": "127.0.0.1",
-        "port": 4355,
-        "debug": True,
+        "http": {
+            "host": "127.0.0.1",
+            "port": 4355,
+            "debug": True,
+        },
+        "routes": [
+            "up.headliner.content.nytimes.urls"
+        ],
 }

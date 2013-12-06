@@ -29,9 +29,10 @@ class ArticleStore(object):
         for article in data:
             pub_date = du_parser.parse(article["pub_date"]).date()
             for category in article["labels"]:
+                label = "{0}.{1}".format(collection, category)
                 item = {
-                        "set_key": "set.{0}.{1}".format(collection, category),
-                        "sorted_key": "sorted.{0}.{1}".format(collection, category),
+                        "collection": collection,
+                        "category": category,
                         "member": article["data"],
                         "score": timegm(pub_date.timetuple()),
                 }
@@ -41,7 +42,7 @@ class ArticleStore(object):
             conn = self._get_connection()
             num_added = self._articlestore_save_articles(keys=["articles"], args=[json.dumps(persisted)], client=conn)
             # the number of articles sent may not match the one added
-            # as duplicates are not stored again
+            # as duplicates and article updates are not persisted
             logger.info("redis articles_sent:{0} articles_added:{1}".format(len(persisted), num_added))
 
     def fetch(self, collection, category, limit=None):
@@ -61,6 +62,14 @@ class ArticleStore(object):
         data = conn.zrevrangebyscore(**args)
         output = [json.loads(d) for d in data]
         return output
+
+    def get_category_counts(self, collection):
+        """
+        Obtain a category list with the counts of articles given a collection name
+        """
+        conn = self._get_connection()
+        data = conn.hgetall("counts.{0}".format(collection))
+        return data
 
     def clear_all(self):
         conn = self._get_connection()
