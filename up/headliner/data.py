@@ -1,5 +1,5 @@
 import json
-from calendar import timegm
+from time import time
 import logging
 import dateutil.parser as du_parser
 from redis import Redis
@@ -20,7 +20,7 @@ class ArticleStore(object):
     def _get_connection(self):
         return Redis(connection_pool=self._pool)
 
-    def save_articles(self, collection, data):
+    def save_articles(self, collection, data, category_max=50):
         """
         Save articles for later retrieval.
         Articles are stored in a sorted set, ordered by publication date
@@ -29,21 +29,24 @@ class ArticleStore(object):
         for article in data:
             pub_date = du_parser.parse(article["pub_date"]).date()
             for category in article["labels"]:
+                # the articles will be sorted by receipt time, in the order they were received
                 label = "{0}.{1}".format(collection, category)
+                score = int(time() * 100000)
+
                 item = {
                         "collection": collection,
                         "category": category,
                         "member": article["data"],
-                        "score": timegm(pub_date.timetuple()),
+                        "score": score,
                 }
                 persisted.append(item)
 
         if persisted:
             conn = self._get_connection()
-            num_added = self._articlestore_save_articles(keys=["articles"], args=[json.dumps(persisted)], client=conn)
+            num_added, num_deleted = self._articlestore_save_articles(keys=["articles", "category_max"], args=[json.dumps(persisted), category_max], client=conn)
             # the number of articles sent may not match the one added
             # as duplicates and article updates are not persisted
-            logger.info("redis articles_sent:{0} articles_added:{1}".format(len(persisted), num_added))
+            logger.info("redis articles_sent:{0} articles_added:{1} articles_deleted:{2}".format(len(persisted), num_added, num_deleted))
 
     def fetch(self, collection, category, limit=None):
         """

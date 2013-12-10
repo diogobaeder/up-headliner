@@ -59,7 +59,7 @@ Once you have setup the environment, entered your API key, and have redis up and
 
     $ ./scripts/populate_nytimes_mostpopular.py
 
-**Warning:** This script will flush the redis database prior to filling it with articles.  
+**Note:** You can specify the --purge option to clear the existing database.  
 
 Once the data is populated, the data will be available for consumption via the HTTP webservice. Following is a description of those API endpoints. The code being described can be found at [https://github.com/oyiptong/up-headliner/blob/master/up/headliner/content/nytimes/urls.py](https://github.com/oyiptong/up-headliner/blob/master/up/headliner/content/nytimes/urls.py).  
 
@@ -101,7 +101,7 @@ Example output:
 
     http://127.0.0.1:4355/nytimes/mostpopular/<interest_name>.json
 
- * This returns a list of articles, ordered by publication date for the given interest name
+ * This returns a list of articles, ordered by receipt time for the given interest name
  * A limit may be specified by a query parameter, "limit" that takes a number
  * The API will return no more than 100 articles
 
@@ -177,6 +177,18 @@ The API returns results in a best-effort manner. If there are less than 10 Arts 
 The output contains articles in order of importance from the interests they belong in.  
 
 The output looks the same as the article listing API.  
+
+Periodic Tasks
+--------------
+
+Periodic tasks can either be set to run via crontab or via Celery-beat.
+
+If you choose to run via the Celery-based implementation, you will need to run two daemons:
+
+ 1. At least one Worker
+ 1. A scheduler
+
+The scheduling information is set via the configuration files. There are scripts to start both daemons in the scripts directory.  
 
 License
 -------

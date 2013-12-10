@@ -1,3 +1,5 @@
+from celery.schedules import crontab
+
 message_broker = {
         "type": "redis",
         "host": "localhost",
@@ -6,6 +8,20 @@ message_broker = {
         "password": None,
         "redis_max_connections": 5,
 }
+
+scheduler = {
+        "CELERYBEAT_SCHEDULE": {
+            "nytimes-fetch_articles-30-mins": {
+                "task": "up.headliner.content.nytimes.tasks.fetch_articles",
+                "schedule": crontab(minute="*/30"),
+            },
+        },
+        "CELERY_TIMEZONE": "UTC",
+}
+
+tasks = [
+        "up.headliner.content.nytimes.tasks",
+]
 
 redis = {
         "host": "127.0.0.1",
@@ -20,6 +36,7 @@ providers = {
             "api_class": "up.headliner.content.nytimes.api.MostPopular",
             "api_url": "http://api.nytimes.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
             "api_key" : "",
+            "category_max_articles": 50,
         },
 }
 
