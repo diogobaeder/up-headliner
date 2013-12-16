@@ -19,6 +19,10 @@ if os.environ.has_key('MOZ_UPHEADLINER_DEV'):
         "ipython==1.1.0",
         "nose==1.3.0",
     ])
+if os.environ.has_key('MOZ_UPHEADLINER_PROD'):
+    requires.extend([
+        "uWSGI==1.9.20",
+    ])
 
 setup(
         name = "headliner",

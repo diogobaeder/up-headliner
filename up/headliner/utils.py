@@ -7,7 +7,7 @@ class SettingsObj(object):
     def __init__(self, **settings):
         self.__dict__.update(settings)
 
-def __read_config_file(options):
+def __read_config_file(options=None):
     # read default config
     config_obj = SettingsObj()
     config_obj.server = settings.server 
@@ -16,6 +16,10 @@ def __read_config_file(options):
     config_obj.message_broker = settings.message_broker
     config_obj.scheduler = settings.scheduler
     config_obj.tasks = settings.tasks
+
+    if options is None:
+        options = SettingsObj()
+        options.config = None
 
     # load external JSON
     if os.path.isfile(DEFAULT_CONFIG_FILEPATH) or options.config:
