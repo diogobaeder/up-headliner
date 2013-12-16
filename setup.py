@@ -3,7 +3,6 @@ from setuptools import setup
 
 requires = [
         "Flask==0.10.1",
-        "uWSGI==1.9.20",
         "celery==3.1.5",
         "redis==2.8.0",
         "hiredis==0.1.1",
