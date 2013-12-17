@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import json
 from up.headliner import settings, DEFAULT_CONFIG_FILEPATH
 
 class SettingsObj(object):
