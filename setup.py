@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 requires = [
         "Flask==0.10.1",
@@ -28,8 +28,8 @@ setup(
         version = "0.1",
         description = "Demo content provider based on Mozilla UP interests",
         author = "Mozilla",
-        packages=["up.headliner"],
-        namespace_packages=["up", "up.headliner"],
+        packages=find_packages(),
+        package_data={"": ["*.lua"]},
         include_package_data=True,
         install_requires = requires,
         scripts=["scripts/up-headliner-server"],
