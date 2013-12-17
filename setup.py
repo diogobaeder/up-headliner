@@ -20,7 +20,7 @@ if os.environ.has_key('MOZ_UPHEADLINER_DEV'):
     ])
 if os.environ.has_key('MOZ_UPHEADLINER_PROD'):
     requires.extend([
-        "uWSGI==1.9.20",
+        "gunicorn==18.0",
     ])
 
 setup(
