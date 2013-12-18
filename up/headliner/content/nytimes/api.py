@@ -200,6 +200,7 @@ class MostPopular(object):
             data = {
                     "url": uri.url,
                     "title": article["title"],
+                    "column": article.get("column", ""),
                     "media": article["media"],
             }
 
