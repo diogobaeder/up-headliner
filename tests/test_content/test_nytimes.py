@@ -104,6 +104,18 @@ class TestMostPopular:
         assert_equals(urls[0], self.most_popular.api_urls[1])
         assert_equals(urls[-1], self.most_popular.api_urls[0])
 
+    def test_extract_categorize_keys(self):
+        article = {
+                "url": "https://example.com/2013/12/03/all/foo-bar.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "all"
+        }
+        result = self.most_popular.extract_categorize(article)
+        assert_equals(set(result), set(["data", "labels", "pub_date"]))
+        assert_equals(set(result["data"]), set(["url", "title", "column", "media"]))
+
     def test_extract_categorize_src(self):
         article = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
