@@ -32,5 +32,5 @@ setup(
         package_data={"": ["*.lua"]},
         include_package_data=True,
         install_requires = requires,
-        scripts=["scripts/up-headliner-server", "scripts/up-headliner-scheduler", "scripts/up-headliner-worker"],
+        scripts=["scripts/up-headliner-server", "scripts/up-headliner-scheduler", "scripts/up-headliner-worker", "scripts/populate_nytimes_mostpopular.py"],
 )
