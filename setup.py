@@ -11,6 +11,7 @@ requires = [
         "python-dateutil==2.2",
         "gevent==1.0",
         "grequests==0.2.0",
+        "Fabric==1.8.1",
 ]
 
 if os.environ.has_key('MOZ_UPHEADLINER_DEV'):
@@ -25,7 +26,7 @@ if os.environ.has_key('MOZ_UPHEADLINER_PROD'):
 
 setup(
         name = "headliner",
-        version = "0.1",
+        version = "0.3",
         description = "Demo content provider based on Mozilla UP interests",
         author = "Mozilla",
         packages=find_packages(),
