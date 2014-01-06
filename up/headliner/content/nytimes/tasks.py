@@ -1,6 +1,6 @@
 import logging
 from up.headliner import Application
-from up.headliner.aggregator import aggregator
+from up.headliner.aggregator_worker import aggregator
 logger = logging.getLogger("headliner")
 
 @aggregator.task
