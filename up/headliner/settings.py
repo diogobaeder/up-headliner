@@ -9,6 +9,14 @@ message_broker = {
         "redis_max_connections": 5,
 }
 
+task_results_backend = {
+        "type": "redis",
+        "host": "localhost",
+        "port": 6379,
+        "database": 2,
+        "password": None,
+}
+
 scheduler = {
         "CELERYBEAT_SCHEDULE": {
             "nytimes-fetch_articles-30-mins": {

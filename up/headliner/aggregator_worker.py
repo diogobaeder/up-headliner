@@ -23,7 +23,7 @@ def get_worker_config():
 
 config = get_worker_config()
 app = Application.instance(config)
-aggregator = Celery("headliner", broker=app.message_broker_url)
+aggregator = Celery("headliner", broker=app.message_broker_url, backend=app.task_results_backend_url)
 
 # import the configured tasks
 for module_name in config.tasks:

@@ -23,7 +23,7 @@ def get_scheduler_config():
 
 config = get_scheduler_config()
 app = Application.instance(config)
-aggregator = Celery("headliner", broker=app.message_broker_url)
+aggregator = Celery("headliner", broker=app.message_broker_url, backend=app.task_results_backend_url)
 
 def main():
     setup_basic_logger()

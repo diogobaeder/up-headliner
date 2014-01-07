@@ -18,6 +18,7 @@ def __read_config_file(options=None):
     config_obj.redis = settings.redis
     config_obj.providers = settings.providers
     config_obj.message_broker = settings.message_broker
+    config_obj.task_results_backend = settings.task_results_backend
     config_obj.scheduler = settings.scheduler
     config_obj.tasks = settings.tasks
 

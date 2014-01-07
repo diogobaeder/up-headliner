@@ -12,7 +12,6 @@ class Application(object):
                 port=config.redis["port"],
                 db=config.redis["database"],
                 password=config.redis["password"],
-                max_connections=config.redis["max_connections"],
         )
         self._providers = {}
         for name, config_details in config.providers.iteritems():
@@ -34,6 +33,14 @@ class Application(object):
             url = "redis://{password}@{host}:{port}/{database}".format(**self.config.redis)
         else:
             url = "redis://{host}:{port}/{database}".format(**self.config.redis)
+        return url
+
+    @property
+    def task_results_backend_url(self):
+        if self.config.task_results_backend.get("password"):
+            url = "{type}://{password}@{host}:{port}/{database}".format(**self.config.task_results_backend)
+        else:
+            url = "{type}://{host}:{port}/{database}".format(**self.config.task_results_backend)
         return url
 
     @property
