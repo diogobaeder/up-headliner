@@ -59,7 +59,7 @@ def setup():
     """
     Create directories and deploy cold
     """
-    run("mkdir -p /var/www/headliner")
+    run("mkdir -p %(path)s" % env)
     deploy_cold()
 
 def deploy():
