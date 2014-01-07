@@ -26,8 +26,8 @@ def upload_from_git():
 
 def set_symlinks():
     require("release", provided_by=[setup, deploy, deploy_cold])
-    run("rm %(path)s/previous" % env)
-    run("mv %(path)s/current %(path)s/previous" % env)
+    run("if [ -h %(path)s/previous ]; then rm %(path)s/previous; fi" % env)
+    run("if [ -h %(path)s/current ]; then mv %(path)s/current %(path)s/previous; fi" % env)
     run("ln -s %(path)s/%(release)s %(path)s/current" % env)
 
 def setup_virtualenv():
