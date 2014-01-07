@@ -8,6 +8,8 @@ env.num_keep_releases = 10
 env.use_ssh_config = True
 env.release = time.strftime("%Y-%m-%d-%H-%M-%S", datetime.utcnow().timetuple())
 
+### Utility
+
 def upload_from_git():
     """
     Create tarball, send over the wire and untar
@@ -32,6 +34,20 @@ def setup_virtualenv():
     require("release", provided_by=[setup, deploy, deploy_cold])
     run("cd %(path)s/%(release)s && MOZ_UPHEADLINER_PROD=1 ./setup-project.sh" % env)
 
+def clean_release_dir():
+    """
+    Delete releases if the number of releases to keep has gone beyond the threshold set by num_keep_releases
+    """
+    if env.num_keep_releases > 1:
+        # keep at least 2 releases: one previous and one current
+        releases = run("find %(path)s -maxdepth 1 -mindepth 1 -type d | sort" % env).split()
+        if len(releases) > env.num_keep_releases:
+            delete_num = len(releases) - env.num_keep_releases
+            delete_list = " ".join(releases[:delete_num])
+            run("rm -rf {0}".format(delete_list))
+
+### Tasks
+
 def deploy_cold():
     """
     Deploy code but don"t change current running version
@@ -51,6 +67,7 @@ def deploy():
     Deploy code, set symlinks and restart supervisor
     """
     deploy_cold()
+    clean_release_dir()
     set_symlinks()
     restart_processes()
 
