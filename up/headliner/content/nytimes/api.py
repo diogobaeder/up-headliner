@@ -2,9 +2,7 @@ import re
 import logging
 from furl import furl
 import requests
-import grequests
 logger = logging.getLogger("headliner")
-
 
 class MostPopular(object):
     NUM_CONCURRENT = 1
@@ -171,19 +169,10 @@ class MostPopular(object):
 
     def fetch_many(self, num):
         output = []
-        urls = self.next_urls(num)
-        rs = [grequests.get(u) for u in urls]
-        responses = grequests.map(rs, size=self.NUM_CONCURRENT)
-
-        result_groups = []
-        for resp in responses:
-            if resp.status_code == 200:
-                result_groups.append(resp.json())
-            else:
-                logger.warn("request_failed status_code:{0} reason:{1} url:{2}".format(resp.status_code, resp.reason, resp.url))
-
-        for result_set in result_groups:
-            output.extend(self.extract_data(result_set))
+        for i in range(num):
+            data = self.fetch_one()
+            if data:
+                output.append(data[0])
         return output
 
     def extract_categorize(self, article):
