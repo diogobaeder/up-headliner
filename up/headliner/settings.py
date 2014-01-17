@@ -45,6 +45,9 @@ providers = {
             "api_url": "http://api.nytimes.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
             "api_key" : "",
             "category_max_articles": 50,
+            "url_decoration": {
+                "src": "recmoz",
+            }
         },
 }
 

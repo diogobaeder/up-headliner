@@ -184,7 +184,8 @@ class MostPopular(object):
 
         if MostPopular.MAPPINGS.has_key(section):
             uri = furl(article["url"])
-            uri.query.add({"src": "moz-up"})
+            for key, val in self.config.get("url_decoration", {}).iteritems():
+                uri.args[key] = val
 
             data = {
                     "url": uri.url,
