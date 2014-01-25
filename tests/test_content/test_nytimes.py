@@ -42,6 +42,9 @@ class TestMostPopular:
         self.config = {
                 "api_url": "http://example.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
                 "api_key": "test_key",
+                "url_decoration": {
+                    "src": "recmoz",
+                }
         }
         self.most_popular = MostPopular(self.config)
 
@@ -126,7 +129,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(article)
         assert_equals(result["data"]["url"][0:len(article["url"])], article["url"])
-        assert_equals(result["data"]["url"][len(article["url"]):], "?src=moz-up")
+        assert_equals(result["data"]["url"][len(article["url"]):], "?src=recmoz")
 
         article = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html?other=args",
@@ -138,7 +141,7 @@ class TestMostPopular:
         result = self.most_popular.extract_categorize(article)
 
         uri = furl(result["data"]["url"])
-        assert_equals(uri.query.params["src"], "moz-up")
+        assert_equals(uri.query.params["src"], "recmoz")
         assert_equals(uri.query.params["other"], "args")
         assert_equals(len(uri.query.params), 2)
         assert_equals(result["data"]["url"][0:len(article["url"])], article["url"])
