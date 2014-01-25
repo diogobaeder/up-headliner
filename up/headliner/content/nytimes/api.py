@@ -1,8 +1,14 @@
+import copy
 import re
 import logging
 from furl import furl
 import requests
+import bleach
 logger = logging.getLogger("headliner")
+
+VALID_LINK_PATTERN = re.compile(r"^https?://")
+VALID_TEXT_TYPES = set([unicode, str])
+VALID_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 class MostPopular(object):
     NUM_CONCURRENT = 1
@@ -179,7 +185,7 @@ class MostPopular(object):
         """
         Obtain categorization for a given article, capture data to be stored.
         """
-        output = None
+        result = None
         section = article.get("section", "").lower()
 
         if MostPopular.MAPPINGS.has_key(section):
@@ -230,13 +236,15 @@ class MostPopular(object):
                     elif sub_section and mapping["__PATH"].has_key(sub_section):
                         labels.update(mapping["__PATH"][sub_section])
 
-            output = {
+            result = {
                     "data": data,
                     "labels": list(labels),
                     "pub_date": article["published_date"]
             }
 
-        return output
+
+        cleaned = self.clean_data(result)
+        return cleaned
 
     def extract_data(self, input):
         articles = []
@@ -246,3 +254,43 @@ class MostPopular(object):
                 if article_data:
                     articles.append(article_data)
         return articles
+
+    def clean_data(self, article, aggressive=True):
+        """
+        Strip all html tags and make sure urls start with either http or https
+        Expected input is a headliner-formatted article
+
+        If aggressive is set to True, function will return None in case of invalid pub_date or url
+        """
+        data = None
+        if article:
+            data = copy.deepcopy(article)
+            object_stack = [(data, data.keys())]
+            reject = False
+            while(len(object_stack) != 0 and not reject):
+                item, keys = object_stack.pop()
+                for key in keys:
+                    val = item[key]
+                    if key == "url":
+                        if not VALID_LINK_PATTERN.match(item[key]):
+                            if aggressive:
+                                reject = True
+                                break
+                            else:
+                                item[key] = ""
+                    elif key == "pub_date":
+                        if not VALID_DATE_PATTERN.match(item["pub_date"]):
+                            if aggressive:
+                                reject = True
+                                break
+                            else:
+                                item[key] = ""
+                    elif type(val) in VALID_TEXT_TYPES:
+                        item[key] = bleach.clean(val, strip=True, tags=[])
+                    elif type(val) == list:
+                        object_stack.append((val, range(len(val))))
+                    elif type(val) == dict:
+                        object_stack.append((val, val.keys()))
+            if reject:
+                return None
+        return data

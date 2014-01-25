@@ -10,6 +10,7 @@ requires = [
         "furl==0.3.6",
         "python-dateutil==2.2",
         "Fabric==1.8.1",
+        "bleach==1.4",
 ]
 
 if os.environ.has_key('MOZ_UPHEADLINER_DEV'):

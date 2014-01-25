@@ -1,6 +1,6 @@
 from furl import furl
 from urlparse import urlparse, parse_qs
-from nose.tools import assert_equals, assert_is_not_none
+from nose.tools import assert_equals, assert_is_not_none, assert_not_equals
 from up.headliner.content.nytimes.api import MostPopular
 
 class TestMostPopular:
@@ -233,3 +233,95 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(none_2)
         assert_equals(set(result["labels"]), set([]))
+
+    def test_clean_data_mixed_types(self):
+        sample = {
+            "data": {
+                "url": "http://www.nytimes.com/2010/08/31/science/31bedbug.html",
+                "column": "",
+                "title": "They Crawl, They Bite, They Baffle Scientists",
+                "media": [
+                    {
+                        "subtype": "photo",
+                        "caption": "THE ICK FACTOR  The lab of Stephen A. Kells, a University of Minnesota entomologist. Bedbugs are not known to transmit disease.",
+                        "media-metadata": [
+                            {
+                                "url": "http://graphics8.nytimes.com/images/2010/08/31/science/31bedbug/31bedbugspan-thumbStandard.jpg",
+                                "width": 75,
+                                "format": "Standard Thumbnail",
+                                "height": 75
+                            }
+                        ],
+                        "copyright": "Allen Brisson-Smith for The New York Times",
+                        "type": "image"
+                    },
+                    {
+                        "subtype": "photo",
+                        "caption": "LITTLE RESEARCH  Stephen A. Kells is one of the few specializing in bedbugs.",
+                        "media-metadata": [
+                            {
+                                "url": "http://graphics8.nytimes.com/images/2010/08/31/science/31bedbug2/31bedbug2-thumbStandard.jpg",
+                                "width": 75,
+                                "format": "Standard Thumbnail",
+                                "height": 75
+                            }
+                        ],
+                        "copyright": "Allen Brisson-Smith for The New York Times",
+                        "type": "image"
+                    }
+                ]
+            },
+            "labels": [
+                "Science"
+            ],
+            "pub_date": "2010-08-31"
+        }
+
+        # complex objects
+        cleaned = self.most_popular.clean_data(sample)
+        assert_equals(cleaned, sample)
+
+    def test_clean_data_content_stripping(self):
+        # html, url and date stripping
+        data = {
+                "data": "<script>hello</script>",
+                "url": "javascript:alert('invalid')",
+                "pub_date": "invalid",
+                "nested": {
+                    "url": "http://totallyvalid.com",
+                    "data1": "<b>strong</b>",
+                    "pub_date": "2014-01-01",
+                    "data2": [
+                        "<em>emphasis</em>",
+                        {
+                            "data3": "<span>span</span>",
+                            "url": "javascript:alert('invalid')",
+                        }
+                    ]
+                }
+        }
+        cleaned = self.most_popular.clean_data(data, aggressive=False)
+        assert_not_equals(cleaned, data)
+        assert_equals(cleaned["data"], "hello")
+        assert_equals(cleaned["url"], "")
+        assert_equals(cleaned["pub_date"], "")
+        assert_equals(cleaned["nested"]["data1"], "strong")
+        assert_equals(cleaned["nested"]["pub_date"], "2014-01-01")
+        assert_equals(cleaned["nested"]["url"], "http://totallyvalid.com")
+        assert_equals(cleaned["nested"]["data2"][0], "emphasis")
+        assert_equals(cleaned["nested"]["data2"][1]["data3"], "span")
+        assert_equals(cleaned["nested"]["data2"][1]["url"], "")
+
+    def test_clean_data_aggressive(self):
+        data = {
+                "url": "javascript:alert('invalid')",
+        }
+        cleaned = self.most_popular.clean_data(data, aggressive=True)
+        assert_equals(cleaned, None)
+
+        data = {
+                "pub_date": "invalid",
+        }
+
+        cleaned = self.most_popular.clean_data(data, aggressive=True)
+        assert_equals(cleaned, None)
