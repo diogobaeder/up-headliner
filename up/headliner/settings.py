@@ -19,9 +19,9 @@ task_results_backend = {
 
 scheduler = {
         "CELERYBEAT_SCHEDULE": {
-            "nytimes-fetch_articles-30-mins": {
+            "nytimes-fetch_articles-120-mins": {
                 "task": "up.headliner.content.nytimes.tasks.fetch_articles",
-                "schedule": crontab(minute="*/30"),
+                "schedule": crontab(hour="*/2"),
             },
         },
         "CELERY_TIMEZONE": "UTC",
