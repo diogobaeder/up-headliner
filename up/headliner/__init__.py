@@ -2,6 +2,8 @@ __import__('pkg_resources').declare_namespace(__name__)
 import redis
 from up.headliner.data import ArticleStore
 
+__VERSION__ = "0.5"
+
 DEFAULT_CONFIG_FILEPATH = "/etc/headliner/headliner.json"
 
 class Application(object):

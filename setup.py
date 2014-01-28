@@ -26,7 +26,7 @@ if os.environ.has_key('MOZ_UPHEADLINER_PROD'):
 
 setup(
         name = "headliner",
-        version = "0.3",
+        version = "0.5",
         description = "Demo content provider based on Mozilla UP interests",
         author = "Mozilla",
         packages=find_packages(),
