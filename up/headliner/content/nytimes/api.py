@@ -22,6 +22,9 @@ class MostPopular(object):
                     "video-games": ["Video-Games"],
                     "__NONE": ["Arts"],
                 },
+                "__FACET": {
+                    "weddings and engagements": ["Weddings"],
+                },
             },
 
             "automobiles": {
@@ -106,6 +109,9 @@ class MostPopular(object):
                 "__ALL": ["Programming", "Technology"],
                 "__PATH": {
                     "personaltech": ["Android", "Apple"],
+                },
+                "__FACET": {
+                    "computer and video games": ["Video-Games"]
                 },
             },
 
