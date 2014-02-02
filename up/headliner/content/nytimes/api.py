@@ -33,14 +33,14 @@ class MostPopular(object):
                 "__ALL": ["Autos"],
             },
 
-            "business": {
+            "business day": {
                 "__ALL": ["Business"],
                 "__PATH": {
                     "smallbusiness": ["Entrepreneur"],
                 },
             },
 
-            "dining": {
+            "dining & wine": {
                 "__ALL": ["Cooking"],
             },
 
@@ -48,27 +48,23 @@ class MostPopular(object):
                 "__ALL": ["Ideas"],
             },
 
-            "fashion": {
+            "fashion & style": {
                 "__ALL": ["Fashion-Men", "Fashion-Women"],
                 "__PATH": {
                     "weddings": ["Weddings"],
                 },
             },
 
-            "garden": {
-                "__ALL": ["Do-It-Yourself", "Home-Design"],
-            },
-
             "health": {
                 "__ALL": ["Health-Men", "Health-Women"],
             },
 
-            "movies": {
-                "__ALL": ["Movies"],
+            "home & garden": {
+                "__ALL": ["Do-It-Yourself", "Home-Design"],
             },
 
-            "politics": {
-                "__ALL": ["Politics"],
+            "movies": {
+                "__ALL": ["Movies"],
             },
 
             "science": {
@@ -117,7 +113,11 @@ class MostPopular(object):
                 "__ALL": ["Travel"],
             },
 
-            "your-money": {
+            "u.s.": {
+                "__ALL": ["Politics"],
+            },
+
+            "your money": {
                 "__ALL": ["Business"],
             },
     }
@@ -192,6 +192,7 @@ class MostPopular(object):
         output = None
         section = article.get("section", "").lower()
 
+        # NB: The article's section can be different from the section url path
         if MostPopular.MAPPINGS.has_key(section):
             uri = furl(article["url"])
             uri.query.add({"src": "moz-up"})
