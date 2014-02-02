@@ -18,8 +18,8 @@ class MostPopular(object):
     MAPPINGS = {
             "arts": {
                 "__PATH": {
-                    "video-games" : ["Video-Games"],
-                    "design" : ["Design"],
+                    "design": ["Design"],
+                    "video-games": ["Video-Games"],
                     "__NONE": ["Arts"],
                 },
             },
@@ -47,7 +47,7 @@ class MostPopular(object):
                 "__ALL": ["Fashion-Men", "Fashion-Women"],
                 "__PATH": {
                     "weddings": ["Weddings"],
-                }
+                },
             },
 
             "garden": {
@@ -69,7 +69,6 @@ class MostPopular(object):
             "politics": {
                 "__ALL": ["Politics"],
             },
-
 
             "science": {
                 "__ALL": ["Science"],
@@ -100,11 +99,11 @@ class MostPopular(object):
                 },
                 "__FACET": {
                     "parenting": ["Parenting"]
-                }
+                },
             },
 
             "technology": {
-                "__ALL" : ["Programming", "Technology"],
+                "__ALL": ["Programming", "Technology"],
                 "__PATH": {
                     "personaltech": ["Android", "Apple"],
                 },
@@ -115,12 +114,12 @@ class MostPopular(object):
             },
 
             "travel": {
-                "__ALL" : ["Travel"],
+                "__ALL": ["Travel"],
             },
 
             "your-money": {
-                    "__ALL": ["Business"],
-            }
+                "__ALL": ["Business"],
+            },
     }
 
     def __init__(self, config):
