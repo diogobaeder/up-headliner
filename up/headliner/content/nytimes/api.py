@@ -19,6 +19,8 @@ class MostPopular(object):
             "arts": {
                 "__PATH": {
                     "design": ["Design"],
+                    "music": ["Music"],
+                    "television": ["Television"],
                     "video-games": ["Video-Games"],
                     "__NONE": ["Arts"],
                 },
@@ -65,10 +67,6 @@ class MostPopular(object):
                 "__ALL": ["Movies"],
             },
 
-            "music": {
-                "__ALL": ["Music"],
-            },
-
             "politics": {
                 "__ALL": ["Politics"],
             },
@@ -113,10 +111,6 @@ class MostPopular(object):
                 "__FACET": {
                     "computer and video games": ["Video-Games"]
                 },
-            },
-
-            "television": {
-                "__ALL" : ["Television"],
             },
 
             "travel": {
