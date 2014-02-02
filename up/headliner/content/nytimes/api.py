@@ -114,7 +114,9 @@ class MostPopular(object):
             },
 
             "u.s.": {
-                "__ALL": ["Politics"],
+                "__PATH": {
+                    "politics": ["Politics"],
+                },
             },
 
             "your money": {
