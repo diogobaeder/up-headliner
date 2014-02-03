@@ -22,9 +22,14 @@ class MostPopular(object):
     MAPPINGS = {
             "arts": {
                 "__PATH": {
-                    "video-games" : ["Video-Games"],
-                    "design" : ["Design"],
+                    "design": ["Design"],
+                    "music": ["Music"],
+                    "television": ["Television"],
+                    "video-games": ["Video-Games"],
                     "__NONE": ["Arts"],
+                },
+                "__FACET": {
+                    "weddings and engagements": ["Weddings"],
                 },
             },
 
@@ -32,14 +37,14 @@ class MostPopular(object):
                 "__ALL": ["Autos"],
             },
 
-            "business": {
+            "business day": {
                 "__ALL": ["Business"],
                 "__PATH": {
                     "smallbusiness": ["Entrepreneur"],
                 },
             },
 
-            "dining": {
+            "dining & wine": {
                 "__ALL": ["Cooking"],
             },
 
@@ -47,33 +52,24 @@ class MostPopular(object):
                 "__ALL": ["Ideas"],
             },
 
-            "fashion": {
+            "fashion & style": {
                 "__ALL": ["Fashion-Men", "Fashion-Women"],
                 "__PATH": {
                     "weddings": ["Weddings"],
-                }
-            },
-
-            "garden": {
-                "__ALL": ["Do-It-Yourself", "Home-Design"],
+                },
             },
 
             "health": {
                 "__ALL": ["Health-Men", "Health-Women"],
             },
 
+            "home & garden": {
+                "__ALL": ["Do-It-Yourself", "Home-Design"],
+            },
+
             "movies": {
                 "__ALL": ["Movies"],
             },
-
-            "music": {
-                "__ALL": ["Music"],
-            },
-
-            "politics": {
-                "__ALL": ["Politics"],
-            },
-
 
             "science": {
                 "__ALL": ["Science"],
@@ -104,27 +100,32 @@ class MostPopular(object):
                 },
                 "__FACET": {
                     "parenting": ["Parenting"]
-                }
-            },
-
-            "technology": {
-                "__ALL" : ["Programming", "Technology"],
-                "__PATH": {
-                    "personaltech": ["Android", "Apple"],
                 },
             },
 
-            "television": {
-                "__ALL" : ["Television"],
+            "technology": {
+                "__ALL": ["Programming", "Technology"],
+                "__PATH": {
+                    "personaltech": ["Android", "Apple"],
+                },
+                "__FACET": {
+                    "computer and video games": ["Video-Games"]
+                },
             },
 
             "travel": {
-                "__ALL" : ["Travel"],
+                "__ALL": ["Travel"],
             },
 
-            "your-money": {
-                    "__ALL": ["Business"],
-            }
+            "u.s.": {
+                "__PATH": {
+                    "politics": ["Politics"],
+                },
+            },
+
+            "your money": {
+                "__ALL": ["Business"],
+            },
     }
 
     def __init__(self, config):
@@ -188,6 +189,7 @@ class MostPopular(object):
         result = None
         section = article.get("section", "").lower()
 
+        # NB: The article's section can be different from the section url path
         if MostPopular.MAPPINGS.has_key(section):
             uri = furl(article["url"])
             for key, val in self.config.get("url_decoration", {}).iteritems():
