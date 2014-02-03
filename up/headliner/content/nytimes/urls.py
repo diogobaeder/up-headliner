@@ -4,6 +4,7 @@ from flask import jsonify, request, Response
 from up.headliner import Application
 from up.headliner.http import webapp
 import json
+import random
 
 ERR_NO_QUERY = '{"err":"no query object provided"}'
 ERR_INVALID_QUERY = '{"err":"invalid query"}'
@@ -47,24 +48,29 @@ def personalize():
         return Response(response=ERR_INVALID_QUERY, status=400)
 
     numbers = {}
-    weight_total = 0
+    weight_total = 0.0
     for category, weight in query.iteritems():
         if type(weight) not in (float, int) or weight < 0 or weight > 1:
             return Response(response=ERR_INVALID_QUERY, status=400)
+        # weight_total should always be float
         weight_total += weight
     for category, weight in query.iteritems():
-        numbers[category] = int(math.floor(weight/weight_total*limit))
+        numbers[category] = int(math.ceil(weight/weight_total*limit))
 
+    # collect all recommendations for each category
+    app = Application.instance()
+    recommendations = []
+    for category in numbers:
+        recommendations.extend(app.article_store.fetch("nytimes_mostpopular", category, numbers[category]))
+
+    # randomize and deduplicate recommendations. store results in articles array
+    random.shuffle(recommendations);
     articles = []
     url_set = set()
-    app = Application.instance()
-    sorted_categories = sorted(numbers, reverse=True)
-    for category in sorted_categories:
-        batch = app.article_store.fetch("nytimes_mostpopular", category, numbers[category])
-        for article in batch:
-            if article["url"] not in url_set:
-                articles.append(article)
-                url_set.add(article["url"])
+    for article in recommendations:
+        if article["url"] not in url_set:
+            articles.append(article)
+            url_set.add(article["url"])
 
     return jsonify(d=articles,num_articles=len(articles))
 
