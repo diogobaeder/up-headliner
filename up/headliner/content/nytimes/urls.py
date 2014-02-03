@@ -71,6 +71,9 @@ def personalize():
         if article["url"] not in url_set:
             articles.append(article)
             url_set.add(article["url"])
+        # inforce articles limit
+        if len(articles) >= limit:
+            break
 
     return jsonify(d=articles,num_articles=len(articles))
 
