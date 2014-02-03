@@ -21,7 +21,7 @@ scheduler = {
         "CELERYBEAT_SCHEDULE": {
             "nytimes-fetch_articles-120-mins": {
                 "task": "up.headliner.content.nytimes.tasks.fetch_articles",
-                "schedule": crontab(hour="*/2"),
+                "schedule": crontab(minute="15", hour="*/2"),
             },
         },
         "CELERY_TIMEZONE": "UTC",
