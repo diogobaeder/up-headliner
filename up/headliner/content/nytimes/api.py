@@ -27,6 +27,7 @@ class MostPopular(object):
                     "television": ["Television"],
                     "video-games": ["Video-Games"],
                     "__NONE": ["Arts"],
+                    "__DEFAULT": ["Arts"],
                 },
                 "__FACET": {
                     "weddings and engagements": ["Weddings"],
