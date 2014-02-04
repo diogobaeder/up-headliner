@@ -237,6 +237,8 @@ class MostPopular(object):
                         labels.update(mapping["__PATH"]["__NONE"])
                     elif sub_section and mapping["__PATH"].has_key(sub_section):
                         labels.update(mapping["__PATH"][sub_section])
+                    elif mapping["__PATH"].has_key("__DEFAULT"):
+                        labels.update(mapping["__PATH"]["__DEFAULT"])
 
             result = {
                     "data": data,

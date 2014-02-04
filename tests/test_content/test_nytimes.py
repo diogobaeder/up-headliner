@@ -35,7 +35,14 @@ class TestMostPopular:
                     "__PATH": {
                         "__NONE": ["No-Subsection"]
                     },
-                }
+                },
+                "default": {
+                    "__PATH": {
+                        "sub-path": ["Sub-Path-Sensitive"],
+                        "__NONE": ["No-Subsection"],
+                        "__DEFAULT": ["Default-Matched"],
+                    },
+                },
         }
 
     def setup(self):
@@ -233,6 +240,37 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(none_2)
         assert_equals(set(result["labels"]), set([]))
+
+    def test_extract_categorize_default_path(self):
+        none_trigger = {
+                "url": "https://example.com/2013/12/03/default/default-trigger.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "default",
+        }
+        result = self.most_popular.extract_categorize(none_trigger)
+        assert_equals(set(result["labels"]), set(["No-Subsection"]))
+
+        subpath_trigger = {
+                "url": "https://example.com/2013/12/03/default/sub-path/default-trigger.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "default",
+        }
+        result = self.most_popular.extract_categorize(subpath_trigger)
+        assert_equals(set(result["labels"]), set(["Sub-Path-Sensitive"]))
+
+        default_trigger = {
+                "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "default",
+        }
+        result = self.most_popular.extract_categorize(default_trigger)
+        assert_equals(set(result["labels"]), set(["Default-Matched"]))
 
     def test_clean_data_mixed_types(self):
         sample = {
