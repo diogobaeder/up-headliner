@@ -43,6 +43,11 @@ class TestMostPopular:
                         "__DEFAULT": ["Default-Matched"],
                     },
                 },
+                "default-simple": {
+                    "__PATH": {
+                        "__DEFAULT": ["Default-Matched"],
+                    },
+                },
         }
 
     def setup(self):
@@ -270,6 +275,27 @@ class TestMostPopular:
                 "section": "default",
         }
         result = self.most_popular.extract_categorize(default_trigger)
+        assert_equals(set(result["labels"]), set(["Default-Matched"]))
+
+    def test_extract_categorize_default_simple(self):
+        subpath_trigger = {
+                "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "default-simple",
+        }
+        result = self.most_popular.extract_categorize(subpath_trigger)
+        assert_equals(set(result["labels"]), set(["Default-Matched"]))
+
+        none_trigger = {
+                "url": "https://example.com/2013/12/03/default/default-trigger.html",
+                "title": "Foo Bar",
+                "media": {},
+                "published_date": "2013-12-04",
+                "section": "default-simple",
+        }
+        result = self.most_popular.extract_categorize(none_trigger)
         assert_equals(set(result["labels"]), set(["Default-Matched"]))
 
     def test_clean_data_mixed_types(self):
