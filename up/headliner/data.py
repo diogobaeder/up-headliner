@@ -48,7 +48,7 @@ class ArticleStore(object):
             # as duplicates and article updates are not persisted
             logger.info("redis articles_sent:{0} articles_added:{1} articles_deleted:{2}".format(len(persisted), num_added, num_deleted))
 
-    def fetch(self, collection, category, limit=None):
+    def fetch(self, collection, category, limit=None, withscores=False):
         """
         Obtain a set of articles given a collection and a category
         """
@@ -58,12 +58,22 @@ class ArticleStore(object):
                 "name": key,
                 "max": "+inf",
                 "min": "-inf",
+                "withscores": withscores,
         }
         if limit:
             args["start"] = 0
             args["num"] = limit
         data = conn.zrevrangebyscore(**args)
-        output = [json.loads(d) for d in data]
+
+        if withscores:
+            output = []
+            for d in data:
+                value, score = d
+                document = json.loads(value)
+                document["score"] = score
+                output.append(document)
+        else:
+            output = [json.loads(d) for d in data]
         return output
 
     def get_category_counts(self, collection):

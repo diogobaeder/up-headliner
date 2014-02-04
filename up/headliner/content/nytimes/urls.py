@@ -4,7 +4,6 @@ from flask import jsonify, request, Response
 from up.headliner import Application
 from up.headliner.http import webapp
 import json
-import random
 
 ERR_NO_QUERY = '{"err":"no query object provided"}'
 ERR_INVALID_QUERY = '{"err":"invalid query"}'
@@ -61,14 +60,15 @@ def personalize():
     app = Application.instance()
     recommendations = []
     for category in numbers:
-        recommendations.extend(app.article_store.fetch("nytimes_mostpopular", category, numbers[category]))
+        recommendations.extend(app.article_store.fetch("nytimes_mostpopular", category, limit=numbers[category], withscores=True))
 
-    # randomize and deduplicate recommendations. store results in articles array
-    random.shuffle(recommendations);
+    # sort and deduplicate recommendations. store results in articles array
+    recommendations.sort(key=lambda x: x["score"], reverse=True)
     articles = []
     url_set = set()
     for article in recommendations:
         if article["url"] not in url_set:
+            del article["score"]
             articles.append(article)
             url_set.add(article["url"])
         # inforce articles limit
