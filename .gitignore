@@ -10,3 +10,4 @@ celerybeat-schedule
 build/
 dist/
 MANIFEST
+.coverage

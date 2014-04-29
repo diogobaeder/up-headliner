@@ -73,3 +73,8 @@ def deploy():
 
 def restart_processes():
     run("sudo supervisorctl restart headliner:*")
+
+### Development
+
+def test():
+    local("nosetests --with-coverage --cover-package=up")
