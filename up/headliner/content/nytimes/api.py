@@ -130,9 +130,14 @@ class MostPopular(object):
     }
 
     def __init__(self, config):
+        self.__check_config(config)
         self.config = config
         self._url_index = 0
         self.api_urls = self.gen_urls()
+
+    def __check_config(self, config):
+        if not config["api_key"]:
+            raise ConfigError("An api_key must be provided")
 
     def gen_urls(self):
         """
@@ -299,3 +304,9 @@ class MostPopular(object):
             if reject:
                 return None
         return data
+
+
+class ConfigError(Exception):
+    """
+    Should be raised if there's a configuration error.
+    """

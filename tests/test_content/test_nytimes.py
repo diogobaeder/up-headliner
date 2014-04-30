@@ -1,7 +1,16 @@
-from furl import furl
+from copy import deepcopy
 from urlparse import urlparse, parse_qs
-from nose.tools import assert_equals, assert_is_not_none, assert_not_equals
-from up.headliner.content.nytimes.api import MostPopular
+
+from furl import furl
+from mock import patch, call
+from nose.tools import (
+    assert_equals,
+    assert_is_not_none,
+    assert_not_equals,
+    assert_raises,
+)
+
+from up.headliner.content.nytimes.api import MostPopular, ConfigError
 
 class TestMostPopular:
     @classmethod
@@ -66,6 +75,13 @@ class TestMostPopular:
         """
         assert_equals(self.most_popular._url_index, 0)
         assert_is_not_none(self.most_popular.api_urls)
+
+    def test_cannot_instantiate_without_api_key(self):
+        """
+        The provider has to receive an api_key in order to operate
+        """
+        self.config["api_key"] = ""
+        assert_raises(ConfigError, MostPopular, self.config)
 
     def test_gen_urls(self):
         """
@@ -172,7 +188,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(section_only)
         assert_equals(result["labels"], ["All-Under-Section"])
- 
+
         multiple = {
                 "url": "https://example.com/2013/12/03/multiple/interests/foo-bar.html",
                 "title": "Foo Bar",
@@ -203,7 +219,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(keyword)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Keyword-Matched"]))
- 
+
         facet = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
@@ -214,7 +230,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(facet)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Facet-Matched"]))
- 
+
         column = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
@@ -389,3 +405,92 @@ class TestMostPopular:
 
         cleaned = self.most_popular.clean_data(data, aggressive=True)
         assert_equals(cleaned, None)
+
+    @patch("up.headliner.content.nytimes.api.requests")
+    def test_fetches_one(self, requests):
+        req = requests.get.return_value
+        req.status_code = 200
+        req.json.return_value = {
+            "num_results": 1,
+            "results": [
+                {
+                    "section": "all",
+                    "url": "http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz",
+                    "title": "In a Hole, Golf Considers Digging a Wider One",
+                    "column": "some column",
+                    "media": "some media",
+                    "published_date": "2014-01-01",
+                }
+            ],
+        }
+
+        results = self.most_popular.fetch_one()
+
+        result = results[0]
+        expected_data = {
+            'url': 'http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz',
+            'column': u'some column',
+            'title': u'In a Hole, Golf Considers Digging a Wider One',
+            'media': u'some media',
+        }
+        assert_equals(result["data"], expected_data)
+        requests.get.assert_called_once_with("http://example.com/svc/mostpopular/v2/mostviewed/all/30.json?api-key=test_key")
+
+    @patch("up.headliner.content.nytimes.api.requests")
+    def test_fetches_many(self, requests):
+        req = requests.get.return_value
+        req.status_code = 200
+        req.json.side_effect = [
+            {
+                "num_results": 1,
+                "results": [
+                    {
+                        "section": "all",
+                        "url": "http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz",
+                        "title": "In a Hole, Golf Considers Digging a Wider One",
+                        "column": "some column",
+                        "media": "some media",
+                        "published_date": "2014-01-01",
+                    }
+                ],
+            },
+            {
+                "num_results": 1,
+                "results": [
+                    {
+                        "section": "all",
+                        "url": "http://www.nytimes.com/video/automobiles/100000002825211/the-miata-turns-25.html?src=recmoz",
+                        "title": "The Mazda Miata Turns 25",
+                        "column": "some column 2",
+                        "media": "some media 2",
+                        "published_date": "2014-01-02",
+                    }
+                ],
+            },
+        ]
+
+        results = self.most_popular.fetch_many(2)
+
+        result = results[0]
+        expected_data = [
+            {
+                'url': 'http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz',
+                'column': u'some column',
+                'title': u'In a Hole, Golf Considers Digging a Wider One',
+                'media': u'some media',
+            },
+            {
+                'url': 'http://www.nytimes.com/video/automobiles/100000002825211/the-miata-turns-25.html?src=recmoz',
+                'column': u'some column 2',
+                'title': u'The Mazda Miata Turns 25',
+                'media': u'some media 2',
+            },
+        ]
+        assert_equals(results[0]["data"], expected_data[0])
+        assert_equals(results[1]["data"], expected_data[1])
+        assert_equals(requests.get.mock_calls, [
+            call("http://example.com/svc/mostpopular/v2/mostviewed/all/30.json?api-key=test_key"),
+            call().json(),
+            call("http://example.com/svc/mostpopular/v2/mostviewed/multiple/30.json?api-key=test_key"),
+            call().json(),
+        ])
