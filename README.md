@@ -168,7 +168,7 @@ With a limit of 20, the API will attempt to return a list of articles as follows
     import math
     article_limit = 20
     total_weights = 0.9 + 0.5 + 0.3
-    num_arts_articles = math.floor(0.9 / total_weights * article_limit)
+    num_arts_articles = math.ceil(0.9 / total_weights * article_limit)
 
 Which makes the number of Arts articles 10, Autos articles 5 and Design articles 3.  
 
