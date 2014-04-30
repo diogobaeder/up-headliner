@@ -2,6 +2,7 @@ from copy import deepcopy
 from urlparse import urlparse, parse_qs
 
 from furl import furl
+from mock import patch, call
 from nose.tools import (
     assert_equals,
     assert_is_not_none,
@@ -404,3 +405,92 @@ class TestMostPopular:
 
         cleaned = self.most_popular.clean_data(data, aggressive=True)
         assert_equals(cleaned, None)
+
+    @patch("up.headliner.content.nytimes.api.requests")
+    def test_fetches_one(self, requests):
+        req = requests.get.return_value
+        req.status_code = 200
+        req.json.return_value = {
+            "num_results": 1,
+            "results": [
+                {
+                    "section": "all",
+                    "url": "http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz",
+                    "title": "In a Hole, Golf Considers Digging a Wider One",
+                    "column": "some column",
+                    "media": "some media",
+                    "published_date": "2014-01-01",
+                }
+            ],
+        }
+
+        results = self.most_popular.fetch_one()
+
+        result = results[0]
+        expected_data = {
+            'url': 'http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz',
+            'column': u'some column',
+            'title': u'In a Hole, Golf Considers Digging a Wider One',
+            'media': u'some media',
+        }
+        assert_equals(result["data"], expected_data)
+        requests.get.assert_called_once_with("http://example.com/svc/mostpopular/v2/mostviewed/all/30.json?api-key=test_key")
+
+    @patch("up.headliner.content.nytimes.api.requests")
+    def test_fetches_many(self, requests):
+        req = requests.get.return_value
+        req.status_code = 200
+        req.json.side_effect = [
+            {
+                "num_results": 1,
+                "results": [
+                    {
+                        "section": "all",
+                        "url": "http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz",
+                        "title": "In a Hole, Golf Considers Digging a Wider One",
+                        "column": "some column",
+                        "media": "some media",
+                        "published_date": "2014-01-01",
+                    }
+                ],
+            },
+            {
+                "num_results": 1,
+                "results": [
+                    {
+                        "section": "all",
+                        "url": "http://www.nytimes.com/video/automobiles/100000002825211/the-miata-turns-25.html?src=recmoz",
+                        "title": "The Mazda Miata Turns 25",
+                        "column": "some column 2",
+                        "media": "some media 2",
+                        "published_date": "2014-01-02",
+                    }
+                ],
+            },
+        ]
+
+        results = self.most_popular.fetch_many(2)
+
+        result = results[0]
+        expected_data = [
+            {
+                'url': 'http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz',
+                'column': u'some column',
+                'title': u'In a Hole, Golf Considers Digging a Wider One',
+                'media': u'some media',
+            },
+            {
+                'url': 'http://www.nytimes.com/video/automobiles/100000002825211/the-miata-turns-25.html?src=recmoz',
+                'column': u'some column 2',
+                'title': u'The Mazda Miata Turns 25',
+                'media': u'some media 2',
+            },
+        ]
+        assert_equals(results[0]["data"], expected_data[0])
+        assert_equals(results[1]["data"], expected_data[1])
+        assert_equals(requests.get.mock_calls, [
+            call("http://example.com/svc/mostpopular/v2/mostviewed/all/30.json?api-key=test_key"),
+            call().json(),
+            call("http://example.com/svc/mostpopular/v2/mostviewed/multiple/30.json?api-key=test_key"),
+            call().json(),
+        ])
