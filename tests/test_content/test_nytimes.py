@@ -1,7 +1,15 @@
-from furl import furl
+from copy import deepcopy
 from urlparse import urlparse, parse_qs
-from nose.tools import assert_equals, assert_is_not_none, assert_not_equals
-from up.headliner.content.nytimes.api import MostPopular
+
+from furl import furl
+from nose.tools import (
+    assert_equals,
+    assert_is_not_none,
+    assert_not_equals,
+    assert_raises,
+)
+
+from up.headliner.content.nytimes.api import MostPopular, ConfigError
 
 class TestMostPopular:
     @classmethod
@@ -66,6 +74,13 @@ class TestMostPopular:
         """
         assert_equals(self.most_popular._url_index, 0)
         assert_is_not_none(self.most_popular.api_urls)
+
+    def test_cannot_instantiate_without_api_key(self):
+        """
+        The provider has to receive an api_key in order to operate
+        """
+        self.config["api_key"] = ""
+        assert_raises(ConfigError, MostPopular, self.config)
 
     def test_gen_urls(self):
         """
@@ -172,7 +187,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(section_only)
         assert_equals(result["labels"], ["All-Under-Section"])
- 
+
         multiple = {
                 "url": "https://example.com/2013/12/03/multiple/interests/foo-bar.html",
                 "title": "Foo Bar",
@@ -203,7 +218,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(keyword)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Keyword-Matched"]))
- 
+
         facet = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
@@ -214,7 +229,7 @@ class TestMostPopular:
         }
         result = self.most_popular.extract_categorize(facet)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Facet-Matched"]))
- 
+
         column = {
                 "url": "https://example.com/2013/12/03/all/foo-bar.html",
                 "title": "Foo Bar",
