@@ -4,7 +4,7 @@ from up.headliner.data import ArticleStore
 
 __VERSION__ = "0.5"
 
-DEFAULT_CONFIG_FILEPATH = "/etc/headliner/headliner.json"
+DEFAULT_CONFIG_FILEPATH = "/etc/up/headliner.json"
 
 class Application(object):
     def __init__(self, config):
