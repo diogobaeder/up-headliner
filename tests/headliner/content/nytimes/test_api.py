@@ -1,4 +1,3 @@
-from copy import deepcopy
 from urlparse import urlparse, parse_qs
 
 from furl import furl
@@ -12,6 +11,7 @@ from nose.tools import (
 
 from up.headliner.content.nytimes.api import MostPopular, ConfigError
 
+
 class TestMostPopular:
     @classmethod
     def setup_class(cls):
@@ -19,53 +19,53 @@ class TestMostPopular:
         MostPopular.POPULARITY = ["mostviewed", "mostshared", "mostemailed"]
 
         MostPopular.MAPPINGS = {
-                "all": {
-                    "__ALL": ["All-Under-Section"],
-                    "__PATH": {
-                        "sub-path": ["Sub-Path-Sensitive"],
-                    },
-                    "__KEYWORD": {
-                        "keyword": ["Keyword-Matched"],
-                    },
-                    "__COLUMN": {
-                        "columned": ["Column-Matched"],
-                    },
-                    "__FACET": {
-                        "faceted": ["Facet-Matched"],
-                    },
+            "all": {
+                "__ALL": ["All-Under-Section"],
+                "__PATH": {
+                    "sub-path": ["Sub-Path-Sensitive"],
                 },
-                "multiple": {
-                    "__ALL": ["Interest-One", "Interest-Two"],
-                    "__PATH": {
-                        "interests": ["Interest-Three"],
-                    },
+                "__KEYWORD": {
+                    "keyword": ["Keyword-Matched"],
                 },
-                "none": {
-                    "__PATH": {
-                        "__NONE": ["No-Subsection"]
-                    },
+                "__COLUMN": {
+                    "columned": ["Column-Matched"],
                 },
-                "default": {
-                    "__PATH": {
-                        "sub-path": ["Sub-Path-Sensitive"],
-                        "__NONE": ["No-Subsection"],
-                        "__DEFAULT": ["Default-Matched"],
-                    },
+                "__FACET": {
+                    "faceted": ["Facet-Matched"],
                 },
-                "default-simple": {
-                    "__PATH": {
-                        "__DEFAULT": ["Default-Matched"],
-                    },
+            },
+            "multiple": {
+                "__ALL": ["Interest-One", "Interest-Two"],
+                "__PATH": {
+                    "interests": ["Interest-Three"],
                 },
+            },
+            "none": {
+                "__PATH": {
+                    "__NONE": ["No-Subsection"]
+                },
+            },
+            "default": {
+                "__PATH": {
+                    "sub-path": ["Sub-Path-Sensitive"],
+                    "__NONE": ["No-Subsection"],
+                    "__DEFAULT": ["Default-Matched"],
+                },
+            },
+            "default-simple": {
+                "__PATH": {
+                    "__DEFAULT": ["Default-Matched"],
+                },
+            },
         }
 
     def setup(self):
         self.config = {
-                "api_url": "http://example.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
-                "api_key": "test_key",
-                "url_decoration": {
-                    "src": "recmoz",
-                }
+            "api_url": "http://example.com/svc/mostpopular/v2/{popularity_type}/{section}/30.json?api-key={api_key}",
+            "api_key": "test_key",
+            "url_decoration": {
+                "src": "recmoz",
+            }
         }
         self.most_popular = MostPopular(self.config)
 
@@ -126,7 +126,7 @@ class TestMostPopular:
         assert_equals(urls, self.most_popular.api_urls)
 
         # off by one wrap-around, causing the result to wrap around in the resulting list
-        _ = self.most_popular.next_url()
+        self.most_popular.next_url()
 
         assert_equals(self.most_popular._url_index, 1)
         urls = self.most_popular.next_urls(num_urls)
@@ -137,11 +137,11 @@ class TestMostPopular:
 
     def test_extract_categorize_keys(self):
         article = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all"
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all"
         }
         result = self.most_popular.extract_categorize(article)
         assert_equals(set(result), set(["data", "labels", "pub_date"]))
@@ -149,22 +149,22 @@ class TestMostPopular:
 
     def test_extract_categorize_src(self):
         article = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all"
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all"
         }
         result = self.most_popular.extract_categorize(article)
         assert_equals(result["data"]["url"][0:len(article["url"])], article["url"])
         assert_equals(result["data"]["url"][len(article["url"]):], "?src=recmoz")
 
         article = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html?other=args",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all"
+            "url": "https://example.com/2013/12/03/all/foo-bar.html?other=args",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all"
         }
         result = self.most_popular.extract_categorize(article)
 
@@ -180,136 +180,136 @@ class TestMostPopular:
         """
         # section-only categorization
         section_only = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all",
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all",
         }
         result = self.most_popular.extract_categorize(section_only)
         assert_equals(result["labels"], ["All-Under-Section"])
 
         multiple = {
-                "url": "https://example.com/2013/12/03/multiple/interests/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "multiple",
+            "url": "https://example.com/2013/12/03/multiple/interests/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "multiple",
         }
         result = self.most_popular.extract_categorize(multiple)
         assert_equals(set(result["labels"]), set(["Interest-One", "Interest-Two", "Interest-Three"]))
 
         path = {
-                "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all",
+            "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all",
         }
         result = self.most_popular.extract_categorize(path)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Sub-Path-Sensitive"]))
 
         keyword = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all",
-                "adx_keywords": "foo;bar;keyword;baz",
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all",
+            "adx_keywords": "foo;bar;keyword;baz",
         }
         result = self.most_popular.extract_categorize(keyword)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Keyword-Matched"]))
 
         facet = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all",
-                "des_facet": ["FACETED"],
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all",
+            "des_facet": ["FACETED"],
         }
         result = self.most_popular.extract_categorize(facet)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Facet-Matched"]))
 
         column = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "all",
-                "column": "columned"
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "all",
+            "column": "columned"
         }
         result = self.most_popular.extract_categorize(column)
         assert_equals(set(result["labels"]), set(["All-Under-Section", "Column-Matched"]))
 
         none = {
-                "url": "https://example.com/2013/12/03/all/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "none",
+            "url": "https://example.com/2013/12/03/all/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "none",
         }
         result = self.most_popular.extract_categorize(none)
         assert_equals(set(result["labels"]), set(["No-Subsection"]))
 
         none_2 = {
-                "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "none",
+            "url": "https://example.com/2013/12/03/all/sub-path/foo-bar.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "none",
         }
         result = self.most_popular.extract_categorize(none_2)
         assert_equals(set(result["labels"]), set([]))
 
     def test_extract_categorize_default_path(self):
         none_trigger = {
-                "url": "https://example.com/2013/12/03/default/default-trigger.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "default",
+            "url": "https://example.com/2013/12/03/default/default-trigger.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "default",
         }
         result = self.most_popular.extract_categorize(none_trigger)
         assert_equals(set(result["labels"]), set(["No-Subsection"]))
 
         subpath_trigger = {
-                "url": "https://example.com/2013/12/03/default/sub-path/default-trigger.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "default",
+            "url": "https://example.com/2013/12/03/default/sub-path/default-trigger.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "default",
         }
         result = self.most_popular.extract_categorize(subpath_trigger)
         assert_equals(set(result["labels"]), set(["Sub-Path-Sensitive"]))
 
         default_trigger = {
-                "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "default",
+            "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "default",
         }
         result = self.most_popular.extract_categorize(default_trigger)
         assert_equals(set(result["labels"]), set(["Default-Matched"]))
 
     def test_extract_categorize_default_simple(self):
         subpath_trigger = {
-                "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "default-simple",
+            "url": "https://example.com/2013/12/03/default/default-section/default-trigger.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "default-simple",
         }
         result = self.most_popular.extract_categorize(subpath_trigger)
         assert_equals(set(result["labels"]), set(["Default-Matched"]))
 
         none_trigger = {
-                "url": "https://example.com/2013/12/03/default/default-trigger.html",
-                "title": "Foo Bar",
-                "media": {},
-                "published_date": "2013-12-04",
-                "section": "default-simple",
+            "url": "https://example.com/2013/12/03/default/default-trigger.html",
+            "title": "Foo Bar",
+            "media": {},
+            "published_date": "2013-12-04",
+            "section": "default-simple",
         }
         result = self.most_popular.extract_categorize(none_trigger)
         assert_equals(set(result["labels"]), set(["Default-Matched"]))
@@ -364,21 +364,21 @@ class TestMostPopular:
     def test_clean_data_content_stripping(self):
         # html, url and date stripping
         data = {
-                "data": "<script>hello</script>",
-                "url": "javascript:alert('invalid')",
-                "pub_date": "invalid",
-                "nested": {
-                    "url": "http://totallyvalid.com",
-                    "data1": "<b>strong</b>",
-                    "pub_date": "2014-01-01",
-                    "data2": [
-                        "<em>emphasis</em>",
-                        {
-                            "data3": "<span>span</span>",
-                            "url": "javascript:alert('invalid')",
-                        }
-                    ]
-                }
+            "data": "<script>hello</script>",
+            "url": "javascript:alert('invalid')",
+            "pub_date": "invalid",
+            "nested": {
+                "url": "http://totallyvalid.com",
+                "data1": "<b>strong</b>",
+                "pub_date": "2014-01-01",
+                "data2": [
+                    "<em>emphasis</em>",
+                    {
+                        "data3": "<span>span</span>",
+                        "url": "javascript:alert('invalid')",
+                    }
+                ]
+            }
         }
         cleaned = self.most_popular.clean_data(data, aggressive=False)
         assert_not_equals(cleaned, data)
@@ -394,13 +394,13 @@ class TestMostPopular:
 
     def test_clean_data_aggressive(self):
         data = {
-                "url": "javascript:alert('invalid')",
+            "url": "javascript:alert('invalid')",
         }
         cleaned = self.most_popular.clean_data(data, aggressive=True)
         assert_equals(cleaned, None)
 
         data = {
-                "pub_date": "invalid",
+            "pub_date": "invalid",
         }
 
         cleaned = self.most_popular.clean_data(data, aggressive=True)
@@ -471,7 +471,6 @@ class TestMostPopular:
 
         results = self.most_popular.fetch_many(2)
 
-        result = results[0]
         expected_data = [
             {
                 'url': 'http://www.nytimes.com/2014/04/19/sports/golf/in-a-hole-golf-considers-digging-a-wider-one.html?src=recmoz',
