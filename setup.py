@@ -21,6 +21,8 @@ if 'MOZ_UPHEADLINER_DEV' in os.environ:
         "coverage==3.7.1",
         "mock==1.0.1",
         "flake8==2.1.0",
+        "yanc==0.2.4",
+        "xtraceback==0.3.3",
     ])
 if 'MOZ_UPHEADLINER_PROD' in os.environ:
     requires.extend([

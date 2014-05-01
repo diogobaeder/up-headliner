@@ -1,5 +1,7 @@
 import time
 from datetime import datetime
+from distutils.util import strtobool
+
 from fabric.api import env, run, local, require, put
 
 env.path = "/var/www/headliner"
@@ -88,11 +90,20 @@ def restart_processes():
 def build():
     test()
     flake()
+    package()
 
 
-def test():
-    local("nosetests --with-coverage --cover-package=up")
+def test(config="nose.cfg"):
+    local("nosetests --config={}".format(config))
 
 
-def flake():
-    local("flake8 . --config=flake8.cfg")
+def flake(config="flake8.cfg"):
+    local("flake8 . --config={}".format(config))
+
+
+def package(clean=True):
+    if not isinstance(clean, bool):
+        clean = strtobool(clean)
+    if clean:
+        local("rm -rf build/")
+    local("python setup.py build")
