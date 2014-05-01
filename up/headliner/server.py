@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from up.headliner import http
+from up.headliner import Application, http
 from up.headliner.utils import read_config_file
 
 
@@ -34,6 +34,7 @@ def get_http_config():
 
 def main():
     config = get_http_config()
+    Application.instance(config)
     http.load_routes(config.server["routes"])
     http.webapp.run(**config.server["http"])
 
