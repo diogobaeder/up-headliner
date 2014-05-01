@@ -19,6 +19,7 @@ if os.environ.has_key('MOZ_UPHEADLINER_DEV'):
         "nose==1.3.0",
         "coverage==3.7.1",
         "mock==1.0.1",
+        "flake8==2.1.0",
     ])
 if os.environ.has_key('MOZ_UPHEADLINER_PROD'):
     requires.extend([
