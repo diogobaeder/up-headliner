@@ -1,6 +1,8 @@
 User Personalization - Headliner
 ================================
 
+[![Build Status](https://secure.travis-ci.org/diogobaeder/up-headliner.png)](http://travis-ci.org/diogobaeder/up-headliner)
+
 Headliner is a service that serves personalized content obtained from various sources via a JSON API.
 It is meant to both serve as a demo to the forthcoming Firefox UP feature and as an example application service.
 
