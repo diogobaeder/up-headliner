@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import argparse
 import logging
+
 from up.headliner import Application
 from up.headliner.utils import __read_config_file, setup_basic_logger
+
+
 setup_basic_logger()
 logger = logging.getLogger("headliner")
+
 
 def get_periodic_shell_config():
     """
@@ -21,6 +24,7 @@ def get_periodic_shell_config():
     config.server["purge"] = options.purge
 
     return config
+
 
 def main():
     config = get_periodic_shell_config()
@@ -39,6 +43,7 @@ def main():
 
     logger.info("Saving data")
     app.article_store.save_articles("nytimes_mostpopular", data)
+
 
 if __name__ == "__main__":
     main()

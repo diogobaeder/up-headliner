@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-import logging
 import argparse
-from up.headliner.utils import __read_config_file, setup_basic_logger
-from up.headliner import Application
+
 from celery import Celery
 from celery.bin.worker import worker
 from celery import maybe_patch_concurrency
+
+from up.headliner.utils import __read_config_file, setup_basic_logger
+from up.headliner import Application
+
 
 def get_worker_config():
     """
@@ -21,19 +23,23 @@ def get_worker_config():
 
     return config
 
+
 config = get_worker_config()
 app = Application.instance(config)
 aggregator = Celery("headliner", broker=app.message_broker_url, backend=app.task_results_backend_url)
 
+
 # import the configured tasks
 for module_name in config.tasks:
     __import__(module_name)
+
 
 def main():
     setup_basic_logger()
     aggregator.config_from_object(app.config.scheduler)
     maybe_patch_concurrency()
     worker(aggregator).execute_from_commandline()
+
 
 if __name__ == "__main__":
     main()

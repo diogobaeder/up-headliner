@@ -1,15 +1,19 @@
 import json
-from time import time
 import logging
-import dateutil.parser as du_parser
+from time import time
+
 from redis import Redis
+
 from up.headliner.backend.scripts import lua_scripts
+
+
 logger = logging.getLogger("headliner")
+
 
 TAXONOMY = ["Android", "Apple", "Arts", "Autos", "Baseball", "Basketball", "Boxing", "Business", "Cooking", "Design", "Do-It-Yourself", "Entrepreneur", "Fashion-Men", "Fashion-Women", "Football", "Gardening", "Golf", "Gossip", "Health-Men", "Health-Women", "Hockey", "Home-Design", "Humor", "Ideas", "Mixed-Martial-Arts", "Movies", "Music", "Parenting", "Photography", "Politics", "Programming", "Science", "Soccer", "Sports", "Technology", "Television", "Tennis", "Travel", "Video-Games", "Weddings"]
 
-class ArticleStore(object):
 
+class ArticleStore(object):
     def __init__(self, pool):
         self._pool = pool
         self.scripts = lua_scripts()
@@ -27,17 +31,15 @@ class ArticleStore(object):
         """
         persisted = []
         for article in data:
-            pub_date = du_parser.parse(article["pub_date"]).date()
             for category in article["labels"]:
                 # the articles will be sorted by receipt time, in the order they were received
-                label = "{0}.{1}".format(collection, category)
                 score = int(time() * 100000)
 
                 item = {
-                        "collection": collection,
-                        "category": category,
-                        "member": article["data"],
-                        "score": score,
+                    "collection": collection,
+                    "category": category,
+                    "member": article["data"],
+                    "score": score,
                 }
                 persisted.append(item)
 
@@ -55,10 +57,10 @@ class ArticleStore(object):
         conn = self._get_connection()
         key = "sorted.{0}.{1}".format(collection, category)
         args = {
-                "name": key,
-                "max": "+inf",
-                "min": "-inf",
-                "withscores": withscores,
+            "name": key,
+            "max": "+inf",
+            "min": "-inf",
+            "withscores": withscores,
         }
         if limit:
             args["start"] = 0

@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import argparse
-import logging
 import json
+import logging
 import re
+
+from furl import furl
+from redis import Redis
+
 from up.headliner import Application
 from up.headliner.utils import __read_config_file, setup_basic_logger
-from redis import Redis
-from furl import furl
+
 
 setup_basic_logger()
 logger = logging.getLogger("headliner")
 LABEL_PATTERN = re.compile(r"^sorted\.(.+)\.(.+)$")
+
 
 def get_periodic_shell_config():
     """
@@ -27,6 +30,7 @@ def get_periodic_shell_config():
     config.server["purge"] = options.purge
 
     return config
+
 
 def main():
     num_changes = 0
@@ -87,6 +91,7 @@ def main():
 
     logger.info("num article changes: {0}/{1}".format(num_changes, num_articles))
     logger.info("num dupes removed: {0}".format(num_dupes_removed))
+
 
 if __name__ == "__main__":
     main()

@@ -1,19 +1,22 @@
 __import__('pkg_resources').declare_namespace(__name__)
+
 import redis
+
 from up.headliner.data import ArticleStore
 
-__VERSION__ = "0.5"
 
+__VERSION__ = "0.5"
 DEFAULT_CONFIG_FILEPATH = "/etc/headliner/webserver.json"
+
 
 class Application(object):
     def __init__(self, config):
         self.config = config
         self._redis_pool = redis.ConnectionPool(
-                host=config.redis["host"],
-                port=config.redis["port"],
-                db=config.redis["database"],
-                password=config.redis["password"],
+            host=config.redis["host"],
+            port=config.redis["port"],
+            db=config.redis["database"],
+            password=config.redis["password"],
         )
         self._providers = {}
         for name, config_details in config.providers.iteritems():
