@@ -1,8 +1,10 @@
+import json
+import logging
 import os
 import sys
-import logging
-import json
+
 from up.headliner import settings, DEFAULT_CONFIG_FILEPATH
+
 
 class SettingsObj(object):
     def __init__(self, **settings):
@@ -18,7 +20,8 @@ class SettingsObj(object):
             else:
                 level[key] = value
 
-def __read_config_file(options=None):
+
+def read_config_file(options=None):
     # read default config
     config_obj = SettingsObj()
     config_obj.server = settings.server
@@ -37,12 +40,13 @@ def __read_config_file(options=None):
     if os.path.isfile(DEFAULT_CONFIG_FILEPATH) or options.config:
         file_path = DEFAULT_CONFIG_FILEPATH
         if options.config and os.path.isfile(options.config):
-            file_path = option.config
+            file_path = options.config
         with open(file_path, "r") as config_file:
             config = json.load(config_file)
             config_obj.update(**config)
 
     return config_obj
+
 
 def setup_basic_logger(loglevel=None):
     loglevel = loglevel or logging.DEBUG

@@ -1,14 +1,19 @@
 import copy
-import re
 import logging
-from furl import furl
+import re
+
 import requests
 import bleach
+from furl import furl
+
+
 logger = logging.getLogger("headliner")
+
 
 VALID_LINK_PATTERN = re.compile(r"^https?://")
 VALID_TEXT_TYPES = set([unicode, str])
 VALID_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}")
+
 
 class MostPopular(object):
     NUM_CONCURRENT = 1
@@ -20,113 +25,113 @@ class MostPopular(object):
     BLOG_PATH_PATTERN = re.compile(r"/[0-9]{4}/")
 
     MAPPINGS = {
-            "arts": {
-                "__PATH": {
-                    "design": ["Design"],
-                    "music": ["Music"],
-                    "television": ["Television"],
-                    "video-games": ["Video-Games"],
-                    "__NONE": ["Arts"],
-                    "__DEFAULT": ["Arts"],
-                },
-                "__FACET": {
-                    "weddings and engagements": ["Weddings"],
-                },
+        "arts": {
+            "__PATH": {
+                "design": ["Design"],
+                "music": ["Music"],
+                "television": ["Television"],
+                "video-games": ["Video-Games"],
+                "__NONE": ["Arts"],
+                "__DEFAULT": ["Arts"],
             },
+            "__FACET": {
+                "weddings and engagements": ["Weddings"],
+            },
+        },
 
-            "automobiles": {
-                "__ALL": ["Autos"],
-            },
+        "automobiles": {
+            "__ALL": ["Autos"],
+        },
 
-            "business day": {
-                "__ALL": ["Business"],
-                "__PATH": {
-                    "smallbusiness": ["Entrepreneur"],
-                },
+        "business day": {
+            "__ALL": ["Business"],
+            "__PATH": {
+                "smallbusiness": ["Entrepreneur"],
             },
+        },
 
-            "dining & wine": {
-                "__ALL": ["Cooking"],
-            },
+        "dining & wine": {
+            "__ALL": ["Cooking"],
+        },
 
-            "education": {
-                "__ALL": ["Ideas"],
-            },
+        "education": {
+            "__ALL": ["Ideas"],
+        },
 
-            "fashion & style": {
-                "__ALL": ["Fashion-Men", "Fashion-Women"],
-                "__PATH": {
-                    "weddings": ["Weddings"],
-                },
+        "fashion & style": {
+            "__ALL": ["Fashion-Men", "Fashion-Women"],
+            "__PATH": {
+                "weddings": ["Weddings"],
             },
+        },
 
-            "health": {
-                "__ALL": ["Health-Men", "Health-Women"],
-            },
+        "health": {
+            "__ALL": ["Health-Men", "Health-Women"],
+        },
 
-            "home & garden": {
-                "__ALL": ["Do-It-Yourself", "Home-Design"],
-            },
+        "home & garden": {
+            "__ALL": ["Do-It-Yourself", "Home-Design"],
+        },
 
-            "movies": {
-                "__ALL": ["Movies"],
-            },
+        "movies": {
+            "__ALL": ["Movies"],
+        },
 
-            "science": {
-                "__ALL": ["Science"],
-            },
+        "science": {
+            "__ALL": ["Science"],
+        },
 
-            "sports": {
-                "__ALL": ["Sports"],
-                "__PATH": {
-                    "baseball": ["Baseball"],
-                    "basketball": ["Basketball"],
-                    "football": ["Football"],
-                    "golf": ["Golf"],
-                    "hockey": ["Hockey"],
-                    "soccer": ["Soccer"],
-                    "tennis": ["Tennis"],
-                },
-                "__KEYWORD": {
-                    "boxing": ["Boxing"],
-                },
-                "__COLUMN": {
-                    "On Boxing": ["Boxing"],
-                },
+        "sports": {
+            "__ALL": ["Sports"],
+            "__PATH": {
+                "baseball": ["Baseball"],
+                "basketball": ["Basketball"],
+                "football": ["Football"],
+                "golf": ["Golf"],
+                "hockey": ["Hockey"],
+                "soccer": ["Soccer"],
+                "tennis": ["Tennis"],
             },
+            "__KEYWORD": {
+                "boxing": ["Boxing"],
+            },
+            "__COLUMN": {
+                "On Boxing": ["Boxing"],
+            },
+        },
 
-            "style": {
-                "__KEYWORD": {
-                    "parenting": ["Parenting"]
-                },
-                "__FACET": {
-                    "parenting": ["Parenting"]
-                },
+        "style": {
+            "__KEYWORD": {
+                "parenting": ["Parenting"]
             },
+            "__FACET": {
+                "parenting": ["Parenting"]
+            },
+        },
 
-            "technology": {
-                "__ALL": ["Programming", "Technology"],
-                "__PATH": {
-                    "personaltech": ["Android", "Apple"],
-                },
-                "__FACET": {
-                    "computer and video games": ["Video-Games"]
-                },
+        "technology": {
+            "__ALL": ["Programming", "Technology"],
+            "__PATH": {
+                "personaltech": ["Android", "Apple"],
             },
+            "__FACET": {
+                "computer and video games": ["Video-Games"]
+            },
+        },
 
-            "travel": {
-                "__ALL": ["Travel"],
-            },
+        "travel": {
+            "__ALL": ["Travel"],
+        },
 
-            "u.s.": {
-                "__PATH": {
-                    "politics": ["Politics"],
-                },
+        "u.s.": {
+            "__PATH": {
+                "politics": ["Politics"],
             },
+        },
 
-            "your money": {
-                "__ALL": ["Business"],
-            },
+        "your money": {
+            "__ALL": ["Business"],
+        },
     }
 
     def __init__(self, config):
@@ -196,42 +201,42 @@ class MostPopular(object):
         section = article.get("section", "").lower()
 
         # NB: The article's section can be different from the section url path
-        if MostPopular.MAPPINGS.has_key(section):
+        if section in MostPopular.MAPPINGS:
             uri = furl(article["url"])
             for key, val in self.config.get("url_decoration", {}).iteritems():
                 uri.args[key] = val
 
             data = {
-                    "url": uri.url,
-                    "title": article["title"],
-                    "column": article.get("column", ""),
-                    "media": article["media"],
+                "url": uri.url,
+                "title": article["title"],
+                "column": article.get("column", ""),
+                "media": article["media"],
             }
 
             labels = set()
             mapping = MostPopular.MAPPINGS[section]
 
-            if mapping.has_key("__ALL"):
+            if "__ALL" in mapping:
                 labels.update(mapping["__ALL"])
 
-            if mapping.has_key("__KEYWORD") and article.has_key("adx_keywords"):
+            if "__KEYWORD" in mapping and "adx_keywords" in article:
                 article_keywords = [k.lower() for k in article["adx_keywords"].split(";")]
                 for k in article_keywords:
-                    if mapping["__KEYWORD"].has_key(k):
+                    if k in mapping["__KEYWORD"]:
                         labels.update(mapping["__KEYWORD"][k])
 
-            if mapping.has_key("__FACET") and article.has_key("des_facet"):
+            if "__FACET" in mapping and "des_facet" in article:
                 article_facets = [f.lower() for f in article["des_facet"]]
                 for f in article_facets:
-                    if mapping["__FACET"].has_key(f):
+                    if f in mapping["__FACET"]:
                         labels.update(mapping["__FACET"][f])
 
-            if mapping.has_key("__COLUMN") and article.has_key("column"):
+            if "__COLUMN" in mapping and "column" in article:
                 col = article["column"].lower()
-                if mapping["__COLUMN"].has_key(col):
+                if col in mapping["__COLUMN"]:
                     labels.update(mapping["__COLUMN"][col])
 
-            if mapping.has_key("__PATH"):
+            if "__PATH" in mapping:
                 path_match = self.WWW_PATH_PATTERN.match(uri.pathstr)
                 if path_match:
                     section, sub_section = path_match.groups()
@@ -239,19 +244,18 @@ class MostPopular(object):
                         # get rid of trailing '/'
                         sub_section = sub_section[:-1]
 
-                    if sub_section is None and mapping["__PATH"].has_key("__NONE"):
+                    if sub_section is None and "__NONE" in mapping["__PATH"]:
                         labels.update(mapping["__PATH"]["__NONE"])
-                    elif sub_section and mapping["__PATH"].has_key(sub_section):
+                    elif sub_section and sub_section in mapping["__PATH"]:
                         labels.update(mapping["__PATH"][sub_section])
-                    elif mapping["__PATH"].has_key("__DEFAULT"):
+                    elif "__DEFAULT" in mapping["__PATH"]:
                         labels.update(mapping["__PATH"]["__DEFAULT"])
 
             result = {
-                    "data": data,
-                    "labels": list(labels),
-                    "pub_date": article["published_date"]
+                "data": data,
+                "labels": list(labels),
+                "pub_date": article["published_date"]
             }
-
 
         cleaned = self.clean_data(result)
         return cleaned

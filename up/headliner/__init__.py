@@ -10,6 +10,8 @@ DEFAULT_CONFIG_FILEPATH = "/etc/headliner/webserver.json"
 
 
 class Application(object):
+    _instance = None
+
     def __init__(self, config):
         self.config = config
         self._redis_pool = redis.ConnectionPool(
@@ -28,9 +30,6 @@ class Application(object):
             self._providers[name] = getattr(module, class_name)(config_details)
 
         self.article_store = ArticleStore(self._redis_pool)
-
-        if not hasattr(Application, "_instance"):
-            Application._instance = self
 
     @property
     def storage_url(self):
@@ -66,7 +65,6 @@ class Application(object):
 
     @classmethod
     def instance(cls, config=None):
-        if hasattr(Application, "_instance") and config is None:
-            return Application._instance
-        else:
-            return Application(config)
+        if cls._instance is None or config is not None:
+            cls._instance = cls(config)
+        return cls._instance
