@@ -4,7 +4,7 @@ import argparse
 import logging
 
 from up.headliner import Application
-from up.headliner.utils import __read_config_file, setup_basic_logger
+from up.headliner.utils import read_config_file, setup_basic_logger
 
 
 setup_basic_logger()
@@ -19,7 +19,7 @@ def get_periodic_shell_config():
     parser.add_argument("--purge", action="store_true", help="Purge the datastore before populating", default=False)
     parser.add_argument("--config", metavar="config", type=str, help="Specify a json configuration file", default=None)
     options = parser.parse_args()
-    config = __read_config_file(options)
+    config = read_config_file(options)
 
     config.server["purge"] = options.purge
 

@@ -5,7 +5,7 @@ from celery import Celery
 from celery.bin.beat import beat
 from celery import maybe_patch_concurrency
 
-from up.headliner.utils import __read_config_file, setup_basic_logger
+from up.headliner.utils import read_config_file, setup_basic_logger
 from up.headliner import Application
 
 
@@ -19,7 +19,7 @@ def get_scheduler_config():
     parser = argparse.ArgumentParser(description="Headliner Scheduler is a program that sends tasks periodically. Tasks are configured in headliner's configuration file.")
     parser.add_argument("--config", metavar="config", type=str, help="Specify a json configuration file", default=None)
     options = parser.parse_args()
-    config = __read_config_file(options)
+    config = read_config_file(options)
 
     return config
 

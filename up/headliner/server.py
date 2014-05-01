@@ -2,7 +2,7 @@
 import argparse
 
 from up.headliner import http
-from up.headliner.utils import __read_config_file
+from up.headliner.utils import read_config_file
 
 
 def get_http_config():
@@ -20,7 +20,7 @@ def get_http_config():
     parser.add_argument("--config", metavar="config", type=str, help="Specify a json configuration file", default=None)
 
     options = parser.parse_args()
-    config = __read_config_file(options)
+    config = read_config_file(options)
 
     if options.host is not None:
         config.server['host'] = options.host
