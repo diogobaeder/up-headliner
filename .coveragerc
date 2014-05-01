@@ -1,0 +1,14 @@
+[run]
+branch = True
+source = up
+include = up/*
+omit = up/*/tests/*
+       up/tests/*
+       test_*.*
+       e2e.py
+
+[report]
+show_missing = True
+
+[html]
+title = Firefox UP coverage report
