@@ -1,13 +1,15 @@
 import math
-from operator import attrgetter
+
 from flask import jsonify, request, Response
+
 from up.headliner import Application
 from up.headliner.http import webapp
-import json
+
 
 ERR_NO_QUERY = '{"err":"no query object provided"}'
 ERR_INVALID_QUERY = '{"err":"invalid query"}'
 MAX_RESPONSE_SIZE = 100
+
 
 @webapp.route("/nytimes/mostpopular.json", methods=["GET"])
 def index():
@@ -19,6 +21,7 @@ def index():
     for category, score in categories.iteritems():
         categories[category] = int(score)
     return jsonify(d=categories)
+
 
 @webapp.route("/nytimes/mostpopular/personalize", methods=["POST"])
 def personalize():
@@ -54,7 +57,7 @@ def personalize():
         # weight_total should always be float
         weight_total += weight
     for category, weight in query.iteritems():
-        numbers[category] = int(math.ceil(weight/weight_total*limit))
+        numbers[category] = int(math.ceil(weight / weight_total * limit))
 
     # collect all recommendations for each category
     app = Application.instance()
@@ -75,7 +78,8 @@ def personalize():
         if len(articles) >= limit:
             break
 
-    return jsonify(d=articles,num_articles=len(articles))
+    return jsonify(d=articles, num_articles=len(articles))
+
 
 @webapp.route("/nytimes/mostpopular/<interest_name>.json", methods=["GET"])
 def fetch_interest(interest_name):
@@ -95,4 +99,4 @@ def fetch_interest(interest_name):
 
     app = Application.instance()
     articles = app.article_store.fetch("nytimes_mostpopular", interest_name, limit)
-    return jsonify(d=articles,num_articles=len(articles))
+    return jsonify(d=articles, num_articles=len(articles))
