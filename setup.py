@@ -26,6 +26,7 @@ if 'MOZ_UPHEADLINER_DEV' in os.environ:
         "ipdb==0.8",
         "ipdbplugin==1.4",
         "Pygments==1.6",
+        "coveralls==0.4.1",
     ])
 if 'MOZ_UPHEADLINER_PROD' in os.environ:
     requires.extend([
