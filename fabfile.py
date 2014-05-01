@@ -87,14 +87,26 @@ def restart_processes():
 
 ### Development
 
+def to_bool(value):
+    if not isinstance(value, bool):
+        return strtobool(value)
+    else:
+        return value
+
+
 def build():
     test()
     flake()
     package()
 
 
-def test(config="nose.cfg"):
-    local("nosetests --config={}".format(config))
+def test(config="nose.cfg", debug_errors=False, debug_failures=False):
+    command = "nosetests --config={}".format(config)
+    if to_bool(debug_errors):
+        command += " --ipdb"
+    if to_bool(debug_failures):
+        command += " --ipdb-failures"
+    local(command)
 
 
 def flake(config="flake8.cfg"):
@@ -102,8 +114,6 @@ def flake(config="flake8.cfg"):
 
 
 def package(clean=True):
-    if not isinstance(clean, bool):
-        clean = strtobool(clean)
-    if clean:
+    if to_bool(clean):
         local("rm -rf build/")
     local("python setup.py build")

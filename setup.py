@@ -23,6 +23,9 @@ if 'MOZ_UPHEADLINER_DEV' in os.environ:
         "flake8==2.1.0",
         "yanc==0.2.4",
         "xtraceback==0.3.3",
+        "ipdb==0.8",
+        "ipdbplugin==1.4",
+        "Pygments==1.6",
     ])
 if 'MOZ_UPHEADLINER_PROD' in os.environ:
     requires.extend([
