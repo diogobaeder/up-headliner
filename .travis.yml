@@ -2,9 +2,8 @@ language: python
 env: MOZ_UPHEADLINER_DEV=1
 python:
   - "2.7"
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq redis-server
+services:
+  - redis-server
 # command to install dependencies
 install: python setup.py install
 # command to run the build
