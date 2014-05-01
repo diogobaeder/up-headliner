@@ -9,12 +9,19 @@ class SettingsObj(object):
         self.update(**settings)
 
     def update(self, **settings):
-        self.__dict__.update(**settings)
+        self.__update_level(self.__dict__, settings)
+
+    def __update_level(self, level, settings):
+        for key, value in settings.items():
+            if key in level and isinstance(level[key], dict) and isinstance(value, dict):
+                self.__update_level(level[key], value)
+            else:
+                level[key] = value
 
 def __read_config_file(options=None):
     # read default config
     config_obj = SettingsObj()
-    config_obj.server = settings.server 
+    config_obj.server = settings.server
     config_obj.redis = settings.redis
     config_obj.providers = settings.providers
     config_obj.message_broker = settings.message_broker
