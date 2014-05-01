@@ -1,7 +1,11 @@
 import logging
+
 from up.headliner import Application
 from up.headliner.aggregator_worker import aggregator
+
+
 logger = logging.getLogger("headliner")
+
 
 @aggregator.task(ignore_result=True)
 def fetch_articles(num_urls=None):
