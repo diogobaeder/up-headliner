@@ -121,6 +121,11 @@ def build():
 
 @section
 def test(config="nose.cfg", debug_errors=False, debug_failures=False):
+    """
+    Run automated tests.
+    If debug_errors is provided as a truey value, will drop on debug prompt as soon as an exception bubbles out from the tests.
+    If debug_failures is provided as a truey value, will drop on debug prompt as soon as an assertion fails.
+    """
     command = "nosetests --config={}".format(config)
     if to_bool(debug_errors):
         command += " --ipdb"
