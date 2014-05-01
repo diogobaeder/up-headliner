@@ -42,6 +42,11 @@ To build the project, just run:
     $ fab build
 
 This will run the tests and some additional checks, like flake8, to help ensure the internal quality of the project.
+Or you can run each build stage separately:
+
+    $ fab test # to run the automated tests
+
+    $ fab flake # to run flake8 with the project options (see flake8.conf)
 
 Configuration
 -------------
