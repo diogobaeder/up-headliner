@@ -37,6 +37,12 @@ You can then read about options about running the server by typing:
 
 Or run the above line without the argument to start an http server with the default configuration.
 
+To build the project, just run:
+
+    $ fab build
+
+This will run the tests and some additional checks, like flake8, to help ensure the internal quality of the project.
+
 Configuration
 -------------
 
