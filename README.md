@@ -45,8 +45,14 @@ This will run the tests and some additional checks, like flake8, to help ensure 
 Or you can run each build stage separately:
 
     $ fab test # to run the automated tests
-
     $ fab flake # to run flake8 with the project options (see flake8.conf)
+    $ fab package # to package the project files
+
+You can also provide additional arguments to each separate dev task:
+
+    $ fab test:config=my-nose.cfg,debug_errors=yes,debug_failures=yes # Use a different config, drop in debug shell on errors or failures
+    $ fab flake:config=my-flake.cfg # Use a different config
+    $ fab package:clean=false # Don't remove build directory before packaging
 
 Configuration
 -------------
