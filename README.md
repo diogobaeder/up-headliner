@@ -1,8 +1,8 @@
 User Personalization - Headliner
 ================================
 
-[![Build Status](https://secure.travis-ci.org/diogobaeder/up-headliner.png)](http://travis-ci.org/diogobaeder/up-headliner)
-[![Coverage Status](https://coveralls.io/repos/diogobaeder/up-headliner/badge.png?branch=master)](https://coveralls.io/r/diogobaeder/up-headliner?branch=master)
+[![Build Status](https://secure.travis-ci.org/oyiptong/up-headliner.png)](http://travis-ci.org/oyiptong/up-headliner)
+[![Coverage Status](https://coveralls.io/repos/oyiptong/up-headliner/badge.png?branch=master)](https://coveralls.io/r/oyiptong/up-headliner?branch=master)
 
 Headliner is a service that serves personalized content obtained from various sources via a JSON API.
 It is meant to both serve as a demo to the forthcoming Firefox UP feature and as an example application service.
